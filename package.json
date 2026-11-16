@@ -11,6 +11,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
+    "db:seed:demo-reviews": "tsx prisma/seed-demo-reviews.ts",
     "ily": "rm -rf .next && next build && next start"
   },
   "dependencies": {

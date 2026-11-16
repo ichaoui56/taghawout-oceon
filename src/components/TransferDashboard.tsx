@@ -34,6 +34,8 @@ import ConciergeManagement from "./ConciergeManagement";
 import type { SiteSeoSettings } from "../seo";
 import type { ConciergeSectionSettings } from "../concierge";
 import type { ManagedBlogPost } from "../server/blog-catalog";
+import GoogleReviewsManagement from "./GoogleReviewsManagement";
+import type { GoogleReviewsSettings, ManagedGoogleReview } from "../server/google-reviews";
 import type { DashboardPage } from "./TransferDashboardWrapper";
 
 type Props = {
@@ -46,6 +48,9 @@ type Props = {
   activityReservations: ManagedActivityReservation[];
   activityReservationCount: number;
   managedBlogs: ManagedBlogPost[];
+  managedGoogleReviews: ManagedGoogleReview[];
+  managedGoogleReviewCount: number;
+  googleReviewSettings: GoogleReviewsSettings | null;
   managedBlogCount: number;
   siteSeoSettings: SiteSeoSettings | null;
   conciergeSettings: ConciergeSectionSettings | null;
@@ -296,6 +301,9 @@ export default function TransferDashboard({
   activityReservations,
   activityReservationCount,
   managedBlogs,
+  managedGoogleReviews,
+  managedGoogleReviewCount,
+  googleReviewSettings,
   managedBlogCount,
   siteSeoSettings,
   conciergeSettings,
@@ -408,6 +416,8 @@ export default function TransferDashboard({
             ? "Activity reservation details"
           : page === "blogs"
             ? "Journal management"
+          : page === "reviews"
+            ? "Customer reviews"
           : page === "settings"
             ? "Account settings"
           : page === "seo"
@@ -677,6 +687,10 @@ export default function TransferDashboard({
                 <span aria-hidden="true">✎</span><span>Travel journal</span>
                 <b className="transfer-sidebar__count">{managedBlogCount}</b>
               </Link>
+              <Link href="/dashboard/reviews" className={page === "reviews" ? "is-active" : ""} title="Manage customer reviews">
+                <span aria-hidden="true">★</span><span>Customer reviews</span>
+                <b className="transfer-sidebar__count">{managedGoogleReviewCount}</b>
+              </Link>
               <Link href="/dashboard/concierge" className={page === "concierge" ? "is-active" : ""} title="Manage Concierge section">
                 <span aria-hidden="true">✦</span><span>Concierge section</span>
               </Link>
@@ -756,7 +770,7 @@ export default function TransferDashboard({
             <div>
               <p className="transfer-eyebrow">Travel operations · Morocco</p>
               <h1>{heading}</h1>
-              <p>{page === "overview" ? "A clear view of your bookings, routes and guest experiences." : page === "requests" ? "Review guest details and keep every booking moving." : page === "request-detail" ? "Full guest, journey and booking details." : page === "activities" ? "Create and publish experiences with complete content and flexible pricing." : page === "activity-detail" ? "Complete content, schedule and booking setup for this experience." : page === "activity-reservations" ? "Review guest requests, confirm availability and manage every experience booking." : page === "activity-reservation-detail" ? "Guest details, scheduled activities and booking status." : page === "blogs" ? "Create stories, control publication, and manage search and social previews." : page === "settings" ? "Update your dashboard username and password." : page === "seo" ? "Manage global metadata, crawling, verification, social previews, and structured identity." : "Manage all transfer options from one place."}</p>
+              <p>{page === "overview" ? "A clear view of your bookings, routes and guest experiences." : page === "requests" ? "Review guest details and keep every booking moving." : page === "request-detail" ? "Full guest, journey and booking details." : page === "activities" ? "Create and publish experiences with complete content and flexible pricing." : page === "activity-detail" ? "Complete content, schedule and booking setup for this experience." : page === "activity-reservations" ? "Review guest requests, confirm availability and manage every experience booking." : page === "activity-reservation-detail" ? "Guest details, scheduled activities and booking status." : page === "blogs" ? "Create stories, control publication, and manage search and social previews." : page === "reviews" ? "Add and publish customer reviews, profile photos, and your Google location." : page === "settings" ? "Update your dashboard username and password." : page === "seo" ? "Manage global metadata, crawling, verification, social previews, and structured identity." : "Manage all transfer options from one place."}</p>
             </div>
             {isAdmin && page === "transfers" && (
               <button type="button" className="transfer-add-button" onClick={startAdd}>
@@ -863,6 +877,8 @@ export default function TransferDashboard({
           {page === "activities" && isAdmin && <ActivityManagement items={managedActivities} />}
 
           {page === "blogs" && isAdmin && <BlogManagement items={managedBlogs} />}
+
+          {page === "reviews" && isAdmin && googleReviewSettings && <GoogleReviewsManagement reviews={managedGoogleReviews} initialSettings={googleReviewSettings} />}
 
           {page === "settings" && <DashboardAccountSettings username={user.username} role={user.role} />}
 

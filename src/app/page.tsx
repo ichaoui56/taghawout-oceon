@@ -4,6 +4,7 @@ import { getPublicActivityCatalog } from "../server/activity-catalog";
 import { getPublicBlogPosts } from "../server/blog-catalog";
 import { getLocale } from "../server/locale";
 import { getConciergeSettings } from "../server/concierge";
+import { getHomepageGoogleReviews } from "../server/google-reviews";
 import { localizeTree } from "../i18n";
 
 export default async function Page() {
@@ -14,6 +15,7 @@ export default async function Page() {
     getLocale(),
     getConciergeSettings(),
   ]);
+  const reviews = await getHomepageGoogleReviews(locale);
   const activities = localizeTree(catalog, locale);
-  return <App activities={activities} posts={posts} locale={locale} concierge={concierge} />;
+  return <App activities={activities} posts={posts} locale={locale} concierge={concierge} reviews={reviews} />;
 }

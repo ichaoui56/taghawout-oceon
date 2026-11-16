@@ -6,6 +6,7 @@ import { getActivityReservationById, getActivityReservationCount, getActivityRes
 import { getManagedBlogCatalog, getManagedBlogCount } from "../server/blog-catalog";
 import { getSiteSeoSettings } from "../server/site-seo";
 import { getConciergeSettings } from "../server/concierge";
+import { getManagedGoogleReviewCount, getManagedGoogleReviews } from "../server/google-reviews";
 import TransferDashboard from "./TransferDashboard";
 
 export type DashboardPage =
@@ -18,6 +19,7 @@ export type DashboardPage =
   | "activity-reservations"
   | "activity-reservation-detail"
   | "blogs"
+  | "reviews"
   | "settings"
   | "seo"
   | "concierge";
@@ -33,7 +35,7 @@ export default async function TransferDashboardWrapper({
   const result = await getTransferDashboardData();
   if (!result.authorized) redirect("/dashboard/loginP");
   if (
-    (page === "transfers" || page === "activities" || page === "activity-detail" || page === "activity-reservations" || page === "activity-reservation-detail" || page === "blogs" || page === "seo" || page === "concierge") &&
+    (page === "transfers" || page === "activities" || page === "activity-detail" || page === "activity-reservations" || page === "activity-reservation-detail" || page === "blogs" || page === "reviews" || page === "seo" || page === "concierge") &&
     result.user.role !== "ADMIN"
   ) {
     redirect("/dashboard/requests");
@@ -66,6 +68,12 @@ export default async function TransferDashboardWrapper({
       ? activityReservations.length
       : await getActivityReservationCount();
   const managedBlogs = page === "blogs" ? await getManagedBlogCatalog() : [];
+  const reviewManagement = page === "reviews" ? await getManagedGoogleReviews() : null;
+  const managedGoogleReviewCount = result.user.role !== "ADMIN"
+    ? 0
+    : page === "reviews"
+      ? reviewManagement?.reviews.length ?? 0
+      : await getManagedGoogleReviewCount();
   const managedBlogCount = result.user.role === "ADMIN"
     ? page === "blogs"
       ? managedBlogs.length
@@ -84,6 +92,9 @@ export default async function TransferDashboardWrapper({
       activityReservations={activityReservations}
       activityReservationCount={activityReservationCount}
       managedBlogs={managedBlogs}
+      managedGoogleReviews={reviewManagement?.reviews ?? []}
+      managedGoogleReviewCount={managedGoogleReviewCount}
+      googleReviewSettings={reviewManagement?.settings ?? null}
       managedBlogCount={managedBlogCount}
       siteSeoSettings={siteSeoSettings}
       conciergeSettings={conciergeSettings}

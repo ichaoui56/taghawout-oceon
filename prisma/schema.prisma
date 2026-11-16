@@ -152,6 +152,30 @@ model BlogSetting {
   updatedAt DateTime @updatedAt
 }
 
+model CustomerReview {
+  id        String   @id @default(cuid())
+  name      String
+  dateAdded DateTime @db.Date
+  photoUrl  String   @default("")
+  message   String
+  messageFr String   @default("")
+  rating    Int
+  isPublished Boolean @default(true)
+  isDemo    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPublished, dateAdded])
+}
+
+model GoogleReviewSetting {
+  id             String   @id @default("homepage")
+  location       String   @default("")
+  googleUrl      String   @default("")
+  HostelGrowthUrl  String   @default("")
+  updatedAt      DateTime @updatedAt
+}
+
 model ConciergeSetting {
   id        String   @id @default("homepage")
   data      Json

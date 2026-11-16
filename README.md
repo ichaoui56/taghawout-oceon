@@ -36,6 +36,30 @@ URL, then set `WHATSAPP_TEMPLATE_NAME` and `WHATSAPP_TEMPLATE_LANGUAGE`.
 Activity reservations and transfer requests are saved even if WhatsApp is
 unavailable; delivery failures are logged on the server.
 
+## Google reviews
+
+Customer reviews can be managed at `/dashboard/reviews`. Each entry has an
+English and French message, date, profile photo, rating, and publication status.
+The business location and Google Maps URL are editable there and appear in the
+homepage review panel. Published dashboard reviews determine the displayed
+average and count.
+
+The homepage can also read current business details and review content from
+Google Places API (New). To enable it, set `GOOGLE_PLACES_API_KEY` and
+`GOOGLE_PLACE_ID` in the server environment. Enable Places API (New) and billing
+for the key, and keep it server-only (never use a `NEXT_PUBLIC_` prefix). Google
+returns up to five reviews for this endpoint; the displayed rating and review
+count come directly from the place response when no dashboard reviews are
+published. Set `HostelGrowth_PROFILE_URL` or the dashboard HostelGrowth URL only
+when a real HostelGrowth certification page should be linked below the cards.
+
+For local layout testing, `npm run db:seed:demo-reviews` adds the supplied sample
+content with demo images. These rows are marked `isDemo` and remain unpublished;
+the seed replaces existing demo rows, so run it only against a local test database.
+
+Without these settings, the section links to Google search and displays an
+unavailable state rather than invented ratings or testimonials.
+
 ```sh
 npm run db:generate
 npm run db:deploy
