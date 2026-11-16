@@ -64,7 +64,7 @@ export default function ContactForm({ locale }: { locale: Locale }) {
       </div>
       {notice && (
         <p className={`contact-inquiry__notice${notice.success ? " is-success" : " is-error"}`} role={notice.success ? "status" : "alert"}>
-          {notice.success ? t("Your message was accepted by our email provider. Check your spam folder if it doesn’t appear.") : t("We couldn’t send your message. Please try again.")}
+          {notice.success ? t("Message sent successfully! We’ll be in touch soon.") : t("We couldn’t send your message. Please try again.")}
         </p>
       )}
     </form>

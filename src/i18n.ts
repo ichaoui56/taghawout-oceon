@@ -124,7 +124,7 @@ const french: Record<string, string> = {
   "Sending message…": "Envoi du message…",
   "We’ll get back to you as soon as possible.": "Nous vous répondrons dès que possible.",
   "Thanks, your message is on its way.": "Merci, votre message est en route.",
-  "Your message was accepted by our email provider. Check your spam folder if it doesn’t appear.": "Notre service e-mail a accepté votre message. Vérifiez vos courriers indésirables si vous ne le voyez pas.",
+  "Message sent successfully! We’ll be in touch soon.": "Votre message a bien été envoyé ! Nous vous répondrons bientôt.",
   "We couldn’t send your message. Please try again.": "Nous n’avons pas pu envoyer votre message. Veuillez réessayer.",
   "Ce que disent nos clients": "Ce que disent nos clients",
   "Découvrez les expériences vécues par nos voyageurs lors de leurs aventures au Maroc avec Mh Traveling.": "Découvrez les expériences vécues par nos voyageurs lors de leurs aventures au Maroc avec Mh Traveling.",
