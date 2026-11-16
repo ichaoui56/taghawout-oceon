@@ -99,7 +99,14 @@ function getSiteUrl() {
   }
 }
 
-function emailLayout(title: string, subtitle: string, content: string, dashboardPath: string) {
+function emailLayout(
+  title: string,
+  subtitle: string,
+  content: string,
+  dashboardPath: string,
+  eyebrow = "NEW RESERVATION",
+  actionLabel = "Open reservation dashboard",
+) {
   const dashboardUrl = `${getSiteUrl()}${dashboardPath}`;
   return `<!doctype html>
 <html lang="en">
@@ -112,14 +119,14 @@ function emailLayout(title: string, subtitle: string, content: string, dashboard
             <div style="margin-top:8px;font-size:11px;line-height:1.4;color:#c9cbc7;">EVERY ARRIVAL, CONSIDERED.</div>
           </td></tr>
           <tr><td style="padding:32px 28px 12px;">
-            <div style="font-size:11px;line-height:1.4;font-weight:700;letter-spacing:1.4px;color:${signal};">NEW RESERVATION</div>
+            <div style="font-size:11px;line-height:1.4;font-weight:700;letter-spacing:1.4px;color:${signal};">${escapeHtml(eyebrow)}</div>
             <h1 style="margin:8px 0 6px;font-size:26px;line-height:1.2;color:${ink};">${escapeHtml(title)}</h1>
             <p style="margin:0;font-size:14px;line-height:1.6;color:#68706d;">${escapeHtml(subtitle)}</p>
           </td></tr>
           <tr><td style="padding:12px 28px 26px;">${content}</td></tr>
           <tr><td style="padding:22px 28px;background:#eeebe3;">
-            <a href="${escapeHtml(dashboardUrl)}" style="display:inline-block;padding:13px 18px;background:${signal};color:#fff;text-decoration:none;font-size:13px;font-weight:700;">Open reservation dashboard</a>
-            <p style="margin:16px 0 0;font-size:11px;line-height:1.5;color:#68706d;">MH Travelling · Reservation notification</p>
+            <a href="${escapeHtml(dashboardUrl)}" style="display:inline-block;padding:13px 18px;background:${signal};color:#fff;text-decoration:none;font-size:13px;font-weight:700;">${escapeHtml(actionLabel)}</a>
+            <p style="margin:16px 0 0;font-size:11px;line-height:1.5;color:#68706d;">MH Travelling · ${escapeHtml(eyebrow.toLowerCase())}</p>
           </td></tr>
         </table>
       </td></tr>
@@ -135,7 +142,7 @@ async function deliverNotification(options: {
   html: string;
   text: string;
   replyTo: string | null;
-}) {
+}): Promise<boolean> {
   const resendApiKey = process.env.RESEND_API_KEY;
   const resendFrom = process.env.RESEND_FROM_EMAIL;
   const host = process.env.SMTP_HOST;
@@ -149,7 +156,7 @@ async function deliverNotification(options: {
   if (resendApiKey) {
     if (!resendFrom || !recipient) {
       console.error("Reservation email skipped: RESEND_FROM_EMAIL or CONTACT_EMAIL is missing.");
-      return;
+      return false;
     }
 
     try {
@@ -175,7 +182,9 @@ async function deliverNotification(options: {
           command: "POST /emails",
           responseCode: response.status,
         });
+        return false;
       }
+      return true;
     } catch (error) {
       const details = error instanceof Error
         ? error as Error & { code?: string }
@@ -184,17 +193,17 @@ async function deliverNotification(options: {
         code: details?.code ?? "UNKNOWN",
         command: "POST /emails",
       });
+      return false;
     }
-    return;
   }
 
   if (!host || !user || !password || !recipient || !Number.isInteger(port) || port < 1 || port > 65535) {
     console.error("Reservation email skipped: SMTP settings are incomplete or invalid.");
-    return;
+    return false;
   }
 
   try {
-    await nodemailer.createTransport({
+    const delivery = await nodemailer.createTransport({
       host,
       port,
       secure,
@@ -210,6 +219,15 @@ async function deliverNotification(options: {
       text: options.text,
       html: options.html,
     });
+    if (delivery.accepted.length === 0 || delivery.rejected.length > 0) {
+      console.error(`Reservation email delivery failed for ${options.kind} ${options.id}.`, {
+        code: "SMTP_RECIPIENT_REJECTED",
+        acceptedCount: delivery.accepted.length,
+        rejectedCount: delivery.rejected.length,
+      });
+      return false;
+    }
+    return true;
   } catch (error) {
     const details = error instanceof Error
       ? error as Error & { code?: string; command?: string; responseCode?: number }
@@ -219,7 +237,34 @@ async function deliverNotification(options: {
       command: details?.command,
       responseCode: details?.responseCode,
     });
+    return false;
   }
+}
+
+export async function sendContactFormNotification(input: {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}): Promise<boolean> {
+  const rows: Array<[string, string]> = [
+    ["Name", input.name],
+    ["Email", input.email],
+    ["Phone", input.phone || "Not provided"],
+    ["Message", input.message],
+  ];
+  const content = `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #e4dfd5;border-collapse:collapse;">${detailRows(rows)}</table>`;
+  const text = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
+  const safeName = input.name.replace(/[\r\n]/g, " ");
+
+  return deliverNotification({
+    kind: "contact",
+    id: `website-${Date.now()}`,
+    subject: `New website enquiry · ${safeName}`,
+    html: emailLayout("New contact enquiry", "A visitor has sent a message from the website.", content, "/", "NEW WEBSITE MESSAGE", "Visit website"),
+    text: `${text}\n\nVisit website: ${getSiteUrl()}`,
+    replyTo: input.email,
+  });
 }
 
 export async function sendTransferReservationNotification(request: TransferReservationNotice) {
