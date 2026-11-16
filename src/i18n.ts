@@ -167,6 +167,8 @@ const french: Record<string, string> = {
   "More than a trip. A journey.": "Plus qu’un séjour. Un voyage.",
   "Website made by": "Site web réalisé par",
   "Back to the beginning ↑": "Retour au début ↑",
+  "Back to the beginning": "Retour au début",
+  "Back to top": "Retour en haut",
   "The Morocco travel journal": "Le carnet de voyage du Maroc",
   "The Morocco Travel Journal": "Le carnet de voyage du Maroc",
   "Take the": "Prenez",

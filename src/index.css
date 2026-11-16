@@ -117,6 +117,44 @@ section[id] { scroll-margin-top: 5rem; }
   background: transparent;
 }
 
+.back-to-top {
+  position: fixed;
+  z-index: 90;
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  left: max(1.25rem, env(safe-area-inset-left));
+  display: grid;
+  width: 3.15rem;
+  height: 3.15rem;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 50%;
+  background: #202626;
+  color: #f65338;
+  box-shadow: 0 0.65rem 1.8rem rgb(32 38 38 / 24%);
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.back-to-top svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+  transition: transform 180ms ease;
+}
+
+.back-to-top:hover {
+  transform: translateY(-3px);
+  background: #f65338;
+  color: #202626;
+  box-shadow: 0 0.9rem 2rem rgb(32 38 38 / 28%);
+}
+
+.back-to-top:hover svg { transform: translateY(-2px); }
+.back-to-top:focus-visible { outline: 3px solid #f65338; outline-offset: 4px; }
+
 .site-nav__menu:focus-visible,
 .site-nav__links a:focus-visible,
 .site-nav .site-language-switch button:focus-visible {
@@ -7529,7 +7567,7 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
   top: -0.65rem;
   right: -0.65rem;
   padding: 0.2rem;
-  background: #f8fafa;
+  background: transparent;
   font-size: 1.4rem;
   transform: rotate(14deg);
 }
@@ -8456,7 +8494,13 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
 
 .contact-footer__nav a { transition: color 160ms ease; }
 .contact-footer__nav a:hover { color: #f65338; }
-.contact-footer__main > p { color: #858580; font-size: 0.7rem; font-style: italic; text-align: right; }
+.contact-footer__aside {
+  display: grid;
+  justify-items: end;
+  gap: 0.7rem;
+}
+
+.contact-footer__aside > p { color: #858580; font-size: 0.7rem; font-style: italic; text-align: right; }
 
 .contact-footer__credit {
   display: flex;
@@ -8487,7 +8531,8 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
 @media (max-width: 900px) {
   .contact-inquiry { grid-template-columns: minmax(15rem, 0.7fr) minmax(0, 1.3fr); gap: 2.5rem; }
   .contact-footer__main { grid-template-columns: 1fr; justify-items: center; gap: 1rem; }
-  .contact-footer__main > p { text-align: center; }
+  .contact-footer__aside { justify-items: center; }
+  .contact-footer__aside > p { text-align: center; }
 }
 
 @media (max-width: 700px) {

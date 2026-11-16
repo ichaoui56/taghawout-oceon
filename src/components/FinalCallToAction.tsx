@@ -33,7 +33,9 @@ export default function FinalCallToAction({ locale }: { locale: Locale }) {
               <Link href="#journal">{t("Travel journal")}</Link>
               <Link href="#why-us">{t("Why choose us")}</Link>
             </nav>
-            <p>{t("More than a trip. A journey.")}</p>
+            <div className="contact-footer__aside">
+              <p>{t("More than a trip. A journey.")}</p>
+            </div>
           </div>
           <div className="contact-footer__credit">
             <span>{t("Website made by")}</span>

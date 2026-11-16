@@ -34,6 +34,7 @@ function escapeHtml(value: string) {
 }
 
 export async function sendContactMessage(input: ContactMessageInput): Promise<ContactMessageResult> {
+  let stage: "validation" | "smtp_send" = "validation";
   try {
     if (typeof input !== "object" || input === null) throw new Error("Message details are invalid.");
     const trap = readField(input.companyFax, "Company fax", 200, false);
@@ -63,6 +64,7 @@ export async function sendContactMessage(input: ContactMessageInput): Promise<Co
     });
     const safeName = name.replace(/[\r\n]/g, " ");
     const phoneLine = phone ? `\nPhone: ${phone}` : "";
+    stage = "smtp_send";
     const delivery = await transporter.sendMail({
       from: `Mh Traveling Website <${smtpUser}>`,
       to: destination,
@@ -72,16 +74,34 @@ export async function sendContactMessage(input: ContactMessageInput): Promise<Co
       html: `<h2>New website enquiry</h2><p><strong>Name:</strong> ${escapeHtml(name)}</p><p><strong>Email:</strong> ${escapeHtml(email)}</p>${phone ? `<p><strong>Phone:</strong> ${escapeHtml(phone)}</p>` : ""}<p><strong>Message:</strong></p><p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>`,
     });
     if (delivery.accepted.length === 0 || delivery.rejected.length > 0) {
-      throw new Error("Our email provider did not accept the recipient. Please try again later.");
+      console.error("Contact form delivery failed.", {
+        stage: "recipient_rejected",
+        acceptedCount: delivery.accepted.length,
+        rejectedCount: delivery.rejected.length,
+      });
+      return { success: false, message: "We couldn't send your message. Please try again later." };
     }
     return { success: true, message: "Message accepted by email provider." };
   } catch (error) {
-    if (error instanceof Error && !error.message.includes("not configured")) {
-      console.error("Contact form delivery failed.");
+    if (stage === "smtp_send") {
+      const mailError = typeof error === "object" && error !== null
+        ? error as { code?: unknown; responseCode?: unknown; command?: unknown }
+        : {};
+      const safeString = (value: unknown) => typeof value === "string"
+        ? value.replace(/[^a-z0-9 _-]/gi, "").slice(0, 40)
+        : undefined;
+      console.error("Contact form delivery failed.", {
+        stage,
+        code: safeString(mailError.code),
+        responseCode: typeof mailError.responseCode === "number" ? mailError.responseCode : undefined,
+        command: safeString(mailError.command),
+      });
     }
     return {
       success: false,
-      message: error instanceof Error ? error.message : "We couldn't send your message. Please try again.",
+      message: stage === "validation" && error instanceof Error
+        ? error.message
+        : "We couldn't send your message. Please try again later.",
     };
   }
 }

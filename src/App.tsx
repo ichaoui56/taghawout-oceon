@@ -14,7 +14,7 @@ import FinalCallToAction from "./components/FinalCallToAction";
 import PageLoader from "./components/PageLoader";
 import type { Activity } from "./activities";
 import type { BlogPost } from "./blogs";
-import type { Locale } from "./i18n";
+import { translate, type Locale } from "./i18n";
 import type { ConciergeSectionSettings } from "./concierge";
 import type { GoogleReviewsData } from "./server/google-reviews";
 
@@ -29,6 +29,11 @@ export default function App({ activities, posts, locale, concierge, reviews }: {
         Skip to the content
       </Link>
       <Nav />
+      <Link href="#top" className="back-to-top" aria-label={translate(locale, "Back to top")} title={translate(locale, "Back to top")}>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 19V5m-6 6 6-6 6 6" />
+        </svg>
+      </Link>
       <main>
         <ScrollFilm locale={locale} />
         <ScrollMotion>
