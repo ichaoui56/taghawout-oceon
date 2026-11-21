@@ -17,11 +17,9 @@ function HeroCopy({ opacity = 1, locale }: { opacity?: number; locale: Locale })
       <p className="mb-4 flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.22em] text-paper/90 md:mb-6">
         <span className="h-px w-7 bg-signal" /> {t("Travel / Concierge")}
       </p>
-      <h1 className="hero-title font-display font-extrabold uppercase">
-        <span className="block whitespace-nowrap">{t("Hero title line one")}</span>
-        <span className="block whitespace-nowrap text-signal">{t("Hero title line two")}</span>
-        <span className="block whitespace-nowrap">{t("Hero title line three")}</span>
-        <span className="block whitespace-nowrap text-signal">{t("Hero title line four")}</span>
+      <h1 className="hero-title hero-title--editorial">
+        <span className="hero-title__lead">{t("Hero title lead")}</span>
+        <span className="hero-title__accent">{t("Hero title accent")}</span>
       </h1>
       <p className="mt-5 max-w-md text-sm leading-relaxed text-paper/90 [text-shadow:0_1px_8px_rgb(0_0_0/35%)] md:mt-7 md:text-base">
         Discover surf, stay and experiences on Morocco’s beautiful Atlantic coast.

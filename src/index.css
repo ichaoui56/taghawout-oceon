@@ -31,6 +31,7 @@ section[id] { scroll-margin-top: 5rem; }
   background: transparent;
   color: #06345a;
   box-shadow: none;
+  
   transition: width 300ms cubic-bezier(0.2, 0.75, 0.25, 1), height 250ms ease, margin 250ms ease, padding 250ms ease, border-radius 250ms ease, border-color 250ms ease, background 250ms ease, box-shadow 250ms ease;
 }
 .site-nav--scrolled { background: transparent; color: #06345a; }
@@ -43,8 +44,7 @@ section[id] { scroll-margin-top: 5rem; }
   background: rgb(255 255 255 / 84%);
   padding-inline: 1.15rem;
   box-shadow: 0 0.75rem 2rem rgb(6 52 90 / 12%), inset 0 1px 0 rgb(255 255 255 / 92%);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(8px);
 }
 .site-nav__actions { display: flex; min-width: 0; flex: 0 0 auto; align-items: center; gap: 0.65rem; }
 .site-nav__brand { flex: 0 0 auto; }
@@ -5541,7 +5541,7 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
 }
 
 .hero-copy {
-  max-width: min(42vw, 36rem);
+  max-width: min(46vw, 44rem);
 }
 
 .hero-title {
@@ -5549,6 +5549,96 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
   letter-spacing: -0.045em;
   line-height: 0.88;
 }
+
+.hero-title--editorial {
+  display: grid;
+  max-width: 10ch;
+  gap: 0.05em;
+  font-family: var(--font-dm-sans);
+  font-size: clamp(3.5rem, 6.4vw, 6.6rem);
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 0.96;
+  text-transform: none;
+}
+
+.hero-title__lead {
+  color: rgb(245 250 252 / 86%);
+  font-size: 0.43em;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.hero-title__accent {
+  color: #43d3ef;
+  font-style: italic;
+  font-weight: 650;
+  text-wrap: nowrap;
+}
+
+.film-chapter {
+  max-width: 32rem;
+  color: #f5fafc;
+  text-shadow: 0 2px 24px rgb(0 26 39 / 38%);
+}
+
+.film-chapter__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+  color: rgb(245 250 252 / 86%);
+  font-family: var(--font-dm-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.film-chapter__eyebrow > span {
+  color: #48d3f2;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.film-chapter__eyebrow > i {
+  width: 1.65rem;
+  height: 1px;
+  background: linear-gradient(90deg, #40cdec, rgb(64 205 236 / 15%));
+}
+
+.film-chapter h2 {
+  max-width: 12ch;
+  font-family: var(--font-dm-sans);
+  font-size: clamp(2.5rem, 4.5vw, 4.8rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 0.99;
+  text-wrap: balance;
+}
+
+.film-chapter__body {
+  max-width: 27rem;
+  margin-top: 1rem;
+  color: rgb(245 250 252 / 90%);
+  font-family: var(--font-dm-sans);
+  font-size: clamp(0.94rem, 1.1vw, 1.06rem);
+  line-height: 1.55;
+}
+
+.film-chapter__accent {
+  display: block;
+  width: 2.4rem;
+  height: 2px;
+  margin-top: 1.2rem;
+  background: linear-gradient(90deg, #40cdec, transparent);
+}
+
+.film-chapter--right { margin-left: auto; text-align: right; }
+.film-chapter--right .film-chapter__eyebrow { justify-content: flex-end; }
+.film-chapter--right .film-chapter__eyebrow > i { background: linear-gradient(90deg, rgb(64 205 236 / 15%), #40cdec); }
+.film-chapter--right .film-chapter__body { margin-left: auto; }
+.film-chapter--right .film-chapter__accent { margin-left: auto; background: linear-gradient(90deg, transparent, #40cdec); }
 
 @media (max-height: 650px) {
   .hero-copy {
@@ -5609,6 +5699,16 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
     line-height: 0.9;
   }
 
+  .hero-title--editorial {
+    max-width: 12ch;
+    font-size: clamp(2.6rem, 11vw, 4rem);
+    line-height: 0.97;
+  }
+
+  .hero-title__lead {
+    font-size: 0.45em;
+  }
+
   .hero-title > span {
     white-space: normal;
   }
@@ -5628,6 +5728,34 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
   .hero-scroll-hint {
     display: none;
   }
+
+  .film-chapter {
+    max-width: none;
+    text-align: left;
+  }
+
+  .film-chapter__eyebrow {
+    gap: 0.55rem;
+    margin-bottom: 0.65rem;
+    font-size: 0.58rem;
+  }
+
+  .film-chapter h2 {
+    max-width: 13ch;
+    font-size: clamp(1.9rem, 8vw, 2.8rem);
+    line-height: 1.02;
+  }
+
+  .film-chapter__body {
+    max-width: 32rem;
+    margin-top: 0.6rem;
+    font-size: 0.84rem;
+  }
+
+  .film-chapter__accent { margin-top: 0.75rem; }
+  .film-chapter--right .film-chapter__eyebrow { justify-content: flex-start; }
+  .film-chapter--right .film-chapter__body,
+  .film-chapter--right .film-chapter__accent { margin-left: 0; }
 
 }
 

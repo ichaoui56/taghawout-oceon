@@ -1,0 +1,169 @@
+.activities-discovery-page {
+  --activity-ink: #073f5e;
+  --activity-blue: #078ac4;
+  --activity-cyan: #08b8df;
+  overflow: clip;
+  background: #edf9fb;
+  color: var(--activity-ink);
+}
+
+.activities-discovery-page img { display: block; }
+.activities-discovery-page h1,
+.activities-discovery-page h2,
+.activities-discovery-page h3,
+.activities-discovery-page p { margin: 0; }
+.activities-discovery-page a { text-decoration: none; }
+
+.activities-hero {
+  position: relative;
+  display: flex;
+  min-height: clamp(27rem, 37vw, 36rem);
+  align-items: center;
+  overflow: hidden;
+  background: #087ba7;
+  color: white;
+}
+.activities-hero__image,
+.activities-hero__shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+.activities-hero__image { object-fit: cover; object-position: center 54%; }
+.activities-hero__shade { background: linear-gradient(90deg, rgb(3 54 75 / 80%) 0%, rgb(3 73 97 / 51%) 42%, rgb(0 75 108 / 5%) 78%), linear-gradient(0deg, rgb(0 48 73 / 35%), transparent 58%); }
+.activities-hero::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2rem; background: #fff9eb; clip-path: polygon(0 26%, 9% 62%, 18% 44%, 30% 73%, 43% 35%, 55% 71%, 68% 30%, 80% 66%, 91% 35%, 100% 61%, 100% 100%, 0 100%); content: ""; }
+.activities-hero__content { position: relative; z-index: 1; width: min(100% - 3rem, 1320px); margin: 3.8rem auto 0; padding: 2rem 0 3rem; }
+.activities-eyebrow { color: #d3f5fc; font-size: 0.73rem; font-weight: 850; letter-spacing: 0.1em; line-height: 1.2; }
+.activities-eyebrow--blue { color: #078db7; }
+.activities-hero h1 { max-width: 20ch; margin-top: 0.75rem; font-family: var(--font-display); font-size: clamp(3.2rem, 6vw, 6.7rem); font-weight: 900; line-height: 0.83; text-shadow: 0 0.2rem 1.2rem rgb(0 25 40 / 25%); }
+.activities-hero__content > p:not(.activities-eyebrow) { max-width: 33rem; margin-top: 1.2rem; color: rgb(255 255 255 / 94%); font-size: clamp(0.92rem, 1.1vw, 1.08rem); line-height: 1.48; }
+.activities-hero__actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 1.35rem; }
+.activities-button { display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; gap: 0.75rem; border: 1px solid transparent; border-radius: 99px; padding: 0.6rem 1.2rem; font-size: 0.67rem; font-weight: 900; letter-spacing: 0.025em; line-height: 1.2; text-align: center; transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease, color 180ms ease; }
+.activities-button:hover { transform: translateY(-2px); }
+.activities-button:focus-visible { outline: 3px solid #25c6ed; outline-offset: 3px; }
+.activities-button > span { font-size: 1rem; line-height: 0.8; }
+.activities-button--light { background: white; color: #07506b; box-shadow: 0 0.4rem 1rem rgb(0 42 57 / 14%); }
+.activities-button--light:hover { background: #e7faff; }
+.activities-button--outline { border-color: rgb(255 255 255 / 74%); background: rgb(255 255 255 / 8%); color: white; backdrop-filter: blur(7px); }
+.activities-button--outline:hover { background: rgb(255 255 255 / 19%); }
+.activities-button--solid { background: var(--activity-blue); color: white; box-shadow: 0 0.4rem 0.9rem rgb(7 141 183 / 20%); }
+.activities-button--solid:hover { background: #056b9d; }
+.activities-hero__scroll { position: absolute; z-index: 2; bottom: 1.25rem; left: 50%; display: grid; width: 2.15rem; aspect-ratio: 1; place-items: center; border: 1px solid rgb(255 255 255 / 76%); border-radius: 50%; color: white; transform: translateX(-50%); }
+.activities-hero__scroll span { animation: activities-scroll 1.7s ease-in-out infinite; }
+@keyframes activities-scroll { 50% { transform: translateY(3px); } }
+
+.activities-content { position: relative; padding: 3.2rem max(1.5rem, calc((100% - 1320px) / 2)) 2.8rem; background: radial-gradient(ellipse at 2% 72%, rgb(124 222 231 / 26%), transparent 28%), linear-gradient(112deg, #fff9eb 0%, #fbfcf5 45%, #e0f6f8 100%); }
+.activities-content__inner { position: relative; z-index: 1; width: min(100%, 1320px); margin-inline: auto; }
+.activities-intro { position: relative; display: flex; min-height: 9.2rem; align-items: flex-start; }
+.activities-intro__coast { position: absolute; top: -3.2rem; right: calc((min(100vw, 1320px) - 100vw) / 2 - max(1.5rem, (100vw - 1320px) / 2)); width: min(65%, 830px); height: 12.2rem; background: linear-gradient(90deg, #fff9eb 0%, rgb(255 249 235 / 8%) 42%), url("/Moroccan%20Coastal%20Travel%20Panorama.webp") center 74% / cover; clip-path: polygon(0 14%, 13% 8%, 25% 19%, 39% 5%, 53% 18%, 68% 7%, 83% 16%, 100% 5%, 100% 100%, 0 100%); }
+.activities-intro__copy { position: relative; z-index: 2; width: min(41%, 500px); padding-top: 0.3rem; }
+.activities-intro h2 { margin-top: 0.65rem; font-family: var(--font-display); font-size: clamp(2.2rem, 3.3vw, 3.7rem); font-weight: 900; line-height: 0.88; }
+.activities-intro__copy > p:last-child { max-width: 27rem; margin-top: 0.65rem; color: #264b5b; font-size: 0.84rem; line-height: 1.48; }
+
+.activity-explorer { margin-top: 1rem; scroll-margin-top: 6rem; }
+.activity-explorer__toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; }
+.activity-explorer__filters { display: flex; min-width: 0; flex-wrap: wrap; gap: 0.35rem; }
+.activity-explorer__filters button { min-height: 2rem; border: 1px solid rgb(7 93 131 / 15%); border-radius: 99px; background: rgb(255 255 255 / 72%); padding: 0.35rem 0.7rem; color: #31596c; cursor: pointer; font-size: 0.62rem; font-weight: 800; transition: background 160ms ease, color 160ms ease, border-color 160ms ease; }
+.activity-explorer__filters button:hover,
+.activity-explorer__filters button.is-active { border-color: #078db7; background: #078db7; color: white; }
+.activity-explorer__search { display: flex; width: min(100%, 14rem); min-height: 2.2rem; flex: 0 0 auto; align-items: center; gap: 0.45rem; border: 1px solid rgb(7 93 131 / 15%); border-radius: 99px; background: rgb(255 255 255 / 80%); padding: 0.35rem 0.75rem; color: #078db7; }
+.activity-explorer__search > span:first-child { font-size: 1.2rem; }
+.activity-explorer__search input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--activity-ink); font-size: 0.68rem; }
+.activity-explorer__count { margin-bottom: 0.7rem !important; color: #547182; font-size: 0.63rem; }
+.activity-explorer__count strong { margin-right: 0.35rem; color: #078db7; font-family: var(--font-display); font-size: 1.05rem; }
+.activity-experience-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem 1rem; }
+.activity-experience-card { min-width: 0; overflow: hidden; border: 1px solid rgb(40 146 183 / 20%); border-radius: 1rem; background: white; box-shadow: 0 0.4rem 1.15rem rgb(17 94 124 / 9%); transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease; }
+.activity-experience-card:hover { transform: translateY(-3px); border-color: rgb(8 157 204 / 50%); box-shadow: 0 0.85rem 1.65rem rgb(17 94 124 / 16%); }
+.activity-experience-card__link { display: block; height: 100%; color: inherit; }
+.activity-experience-card__image { position: relative; height: clamp(9rem, 13vw, 11rem); overflow: hidden; margin: 0; background: #a7dce9; }
+.activity-experience-card__image::after { position: absolute; inset: 45% 0 0; background: linear-gradient(transparent, rgb(2 43 65 / 34%)); content: ""; pointer-events: none; }
+.activity-experience-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform 650ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+.activity-experience-card:hover .activity-experience-card__image img { transform: scale(1.055); }
+.activity-experience-card__icon { position: absolute; z-index: 1; top: 0.65rem; left: 0.65rem; display: grid; width: 2.85rem; aspect-ratio: 1; place-items: center; border: 2px solid #08aee1; border-radius: 50%; background: white; color: #0879ad; box-shadow: 0 0.25rem 0.8rem rgb(0 72 105 / 18%); }
+.activity-experience-card__icon svg { width: 1.35rem; height: 1.35rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.activity-experience-card__category { position: absolute; z-index: 1; right: 0.7rem; bottom: 0.65rem; border: 1px solid rgb(255 255 255 / 45%); border-radius: 99px; background: rgb(3 69 98 / 72%); padding: 0.3rem 0.55rem; color: white; font-size: 0.55rem; font-weight: 800; backdrop-filter: blur(5px); }
+.activity-experience-card__body { display: flex; min-height: 5.2rem; align-items: center; justify-content: space-between; gap: 0.8rem; padding: 0.7rem 0.8rem 0.8rem; }
+.activity-experience-card__copy { min-width: 0; }
+.activity-experience-card__copy h3 { font-family: var(--font-display); font-size: clamp(1.1rem, 1.5vw, 1.45rem); font-weight: 900; line-height: 1; }
+.activity-experience-card__copy p { max-width: 28rem; margin-top: 0.32rem; color: #456577; font-size: 0.68rem; line-height: 1.35; }
+.activity-experience-card__button { display: inline-flex; min-height: 2.2rem; flex: 0 0 auto; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid #178ce0; border-radius: 99px; padding: 0.4rem 0.75rem; color: #0879bd; font-size: 0.63rem; font-weight: 850; white-space: nowrap; transition: background 180ms ease, color 180ms ease, transform 180ms ease; }
+.activity-experience-card:hover .activity-experience-card__button { background: #078bd0; color: white; }
+.activity-experience-card__button > span { transition: transform 180ms ease; }
+.activity-experience-card:hover .activity-experience-card__button > span { transform: translateX(3px); }
+.activity-experience-card__link:focus-visible { outline: 3px solid #18bce8; outline-offset: 3px; }
+.activity-explorer__empty { padding: 3rem 1rem; border: 1px dashed rgb(7 93 131 / 30%); border-radius: 1rem; text-align: center; }
+.activity-explorer__empty h3 { font-family: var(--font-display); font-size: 1.5rem; }
+.activity-explorer__empty button { margin-top: 0.8rem; color: #078db7; cursor: pointer; font-size: 0.75rem; font-weight: 800; }
+
+.activities-final-cta { position: relative; display: grid; min-height: 13.5rem; place-items: center; overflow: hidden; background-image: linear-gradient(180deg, rgb(0 64 87 / 26%), rgb(0 44 69 / 78%)), url("https://images.unsplash.com/photo-1455729552865-3658a5d39692?auto=format&fit=crop&w=2000&q=88"); background-position: center, center 64%; background-size: cover; color: white; text-align: center; }
+.activities-final-cta::before { position: absolute; inset: 0 0 auto; height: 1.2rem; background: #e0f6f8; clip-path: polygon(0 0, 12% 60%, 25% 15%, 42% 76%, 61% 16%, 78% 70%, 100% 20%, 100% 0); content: ""; }
+.activities-final-cta__content { position: relative; width: min(100% - 2rem, 1000px); padding: 2rem 0; }
+.activities-final-cta h2 { margin-top: 0.45rem; font-family: var(--font-display); font-size: clamp(2.3rem, 4.3vw, 4.5rem); font-weight: 900; line-height: 0.9; }
+.activities-final-cta__content > p:not(.activities-eyebrow) { margin-top: 0.55rem; font-size: 0.85rem; line-height: 1.45; }
+.activities-final-cta .activities-button { margin-top: 0.9rem; }
+
+.activities-discovery-page > .contact-footer { min-height: 9rem; margin: 0; padding: 1rem max(1.5rem, calc((100% - 1320px) / 2)) 5.7rem; overflow: hidden; background: linear-gradient(180deg, #f8fcfe, #e1f6fc); }
+.activities-discovery-page > .contact-footer .contact-footer__main,
+.activities-discovery-page > .contact-footer .contact-footer__credit { width: min(100%, 1320px); margin-inline: auto; }
+.activities-discovery-page > .contact-footer .contact-footer__waves { z-index: 1; }
+
+.activity-experience-detail { min-height: 72vh; padding: 8rem max(1.5rem, calc((100% - 1320px) / 2)) 5rem; background: linear-gradient(110deg, #fdf9ed, #e7f7f8); }
+.activity-experience-detail__inner { width: min(100%, 1320px); margin-inline: auto; }
+.activity-experience-detail__breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; color: #567180; font-size: 0.75rem; }
+.activity-experience-detail__breadcrumb a { color: #078db7; font-weight: 800; }
+.activity-experience-detail__layout { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); margin-top: 2rem; }
+.activity-experience-detail__copy h1 { margin-top: 0.55rem; font-family: var(--font-display); font-size: clamp(2.8rem, 5vw, 5.4rem); font-weight: 900; line-height: 0.88; }
+.activity-experience-detail__copy > p:not(.activities-eyebrow) { margin-top: 0.85rem; color: #385e70; font-size: 1rem; line-height: 1.55; }
+.activity-experience-detail__copy > .activity-experience-detail__note { font-size: 0.78rem; }
+.activity-experience-detail__copy .activities-button { margin-top: 1.1rem; }
+.activity-experience-detail__image { width: 100%; max-height: 34rem; aspect-ratio: 1.35; border: 1px solid rgb(8 157 204 / 25%); border-radius: 1.2rem; object-fit: cover; box-shadow: 0 1rem 2.5rem rgb(18 84 110 / 16%); }
+
+@media (max-width: 900px) {
+  .activities-content { padding-inline: 1.5rem; }
+  .activities-intro__copy { width: 45%; }
+  .activity-explorer__toolbar { align-items: flex-start; flex-direction: column; }
+  .activities-discovery-page > .contact-footer { padding-inline: 1.5rem; }
+}
+
+@media (max-width: 640px) {
+  .activities-hero { min-height: 39rem; align-items: flex-end; }
+  .activities-hero__image { object-position: 63% center; }
+  .activities-hero__shade { background: linear-gradient(90deg, rgb(3 54 75 / 74%), rgb(3 73 97 / 27%)), linear-gradient(0deg, rgb(0 45 68 / 56%), transparent 67%); }
+  .activities-hero__content { width: calc(100% - 2.4rem); margin: 0 auto 2.1rem; padding: 0; }
+  .activities-hero h1 { max-width: 11ch; font-size: clamp(3.2rem, 13vw, 5.1rem); }
+  .activities-hero__content > p:not(.activities-eyebrow) { max-width: 28rem; font-size: 0.88rem; }
+  .activities-hero__actions { gap: 0.5rem; margin-top: 1rem; }
+  .activities-button { min-height: 2.65rem; padding-inline: 0.9rem; font-size: 0.6rem; }
+  .activities-content { padding: 2.7rem 1.1rem 2rem; }
+  .activities-intro { min-height: 13.2rem; }
+  .activities-intro__coast { top: 4.6rem; right: -1.1rem; width: 100%; height: 8.3rem; background-position: center 70%; }
+  .activities-intro__copy { width: min(100%, 27rem); }
+  .activities-intro h2 { font-size: 2.55rem; }
+  .activities-intro__copy > p:last-child { max-width: 21rem; font-size: 0.77rem; }
+  .activity-explorer { margin-top: 0.4rem; }
+  .activity-explorer__filters { gap: 0.3rem; }
+  .activity-explorer__filters button { min-height: 1.85rem; padding-inline: 0.6rem; font-size: 0.58rem; }
+  .activity-explorer__search { width: 100%; }
+  .activity-experience-grid { grid-template-columns: minmax(0, 1fr); gap: 0.8rem; }
+  .activity-experience-card__image { height: 12rem; }
+  .activity-experience-card__body { min-height: 5.4rem; padding: 0.75rem; }
+  .activity-experience-card__copy h3 { font-size: 1.35rem; }
+  .activity-experience-card__copy p { font-size: 0.72rem; }
+  .activity-experience-card__button { min-height: 2.05rem; padding-inline: 0.6rem; font-size: 0.6rem; }
+  .activities-final-cta { min-height: 16rem; padding-block: 1rem; }
+  .activities-final-cta__content { width: calc(100% - 2rem); }
+  .activities-final-cta h2 { font-size: clamp(2.35rem, 9vw, 3.2rem); }
+  .activities-final-cta__content > p:not(.activities-eyebrow) { max-width: 23rem; margin-inline: auto; font-size: 0.8rem; }
+  .activities-discovery-page > .contact-footer { padding: 1.1rem 1rem 5.3rem; }
+  .activities-discovery-page > .contact-footer .contact-footer__main { gap: 0.85rem; }
+  .activities-discovery-page > .contact-footer .contact-footer__nav { max-width: 21rem; }
+  .activity-experience-detail { padding: 6.5rem 1.15rem 3rem; }
+  .activity-experience-detail__layout { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+  .activity-experience-detail__copy h1 { font-size: 3.3rem; }
+  .activity-experience-detail__image { max-height: 22rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activities-hero__scroll span { animation: none; }
+  .activities-button,
+  .activity-experience-card,
+  .activity-experience-card__image img,
+  .activity-experience-card__button,
+  .activity-experience-card__button > span { transition: none; }
+}

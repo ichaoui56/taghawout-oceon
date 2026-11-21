@@ -18,6 +18,7 @@ export default function Nav() {
   const trigger = useRef<HTMLButtonElement>(null);
   const languageMenu = useRef<HTMLDetailsElement>(null);
   const closeTimer = useRef<number | null>(null);
+  const homeStyle = pathname === "/" || pathname === "/surf-packages" || pathname === "/surf-lessons" || pathname === "/activities";
   const homeHref = (href: string) => href.startsWith("/") || pathname === "/" ? href : `/${href}`;
 
   const closeMenu = () => {
@@ -48,6 +49,8 @@ export default function Nav() {
     const syncActiveLink = () => {
       const hash = window.location.hash;
       if (NAV_LINKS.some((link) => link.href === hash)) setActiveHref(hash);
+      else if (pathname === "/surf-packages") setActiveHref("/surf-packages");
+      else if (pathname === "/surf-lessons") setActiveHref("/surf-lessons");
       else if (pathname.startsWith("/activities")) setActiveHref("/activities");
       else if (pathname.startsWith("/blog") || pathname.startsWith("/blogs")) setActiveHref("#journal");
       else setActiveHref("");
@@ -105,10 +108,10 @@ export default function Nav() {
 
   return (
     <>
-      <header className={`site-nav fixed inset-x-0 top-0 z-[100] text-paper${scrolled ? " site-nav--scrolled" : pathname !== "/" ? " site-nav--interior" : ""}${open ? " site-nav--menu-open" : ""}`}>
+      <header className={`site-nav fixed inset-x-0 top-0 z-[100] text-paper${scrolled ? " site-nav--scrolled" : !homeStyle ? " site-nav--interior" : ""}${open ? " site-nav--menu-open" : ""}`}>
         <div className="site-nav__inner flex h-16 items-center justify-between gap-6">
           <div className="site-nav__brand flex min-w-0 items-center">
-            <Logo href={pathname === "/" ? "#top" : "/#top"} compact={scrolled} tone={scrolled || open || pathname !== "/" ? "blue" : "white"} />
+            <Logo href={pathname === "/" ? "#top" : "/#top"} compact={scrolled} tone={scrolled || open || !homeStyle ? "blue" : "white"} />
           </div>
           <nav aria-label={t("Primary navigation")} className="site-nav__desktop-nav">
             <ul className="site-nav__links">
@@ -126,7 +129,7 @@ export default function Nav() {
             </ul>
           </nav>
           <div className="site-nav__actions">
-            <Link href={homeHref("#transfer")} className="site-nav__book">
+            <Link href={homeHref("#contact")} className="site-nav__book">
               <span>{t("Plan your adventure")}</span>
               <span className="site-nav__book-arrow" aria-hidden="true">↗</span>
             </Link>

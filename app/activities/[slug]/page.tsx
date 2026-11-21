@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import Nav from "../../../src/components/Nav";
+import ActivityExperienceDetail from "../../../src/components/ActivityExperienceDetail";
+import { getActivityExperience } from "../../../src/activity-experiences";
 import { getActivityImageUrl } from "../../../src/activities";
 import { getPublicActivityCatalog } from "../../../src/server/activity-catalog";
 import { getLocale } from "../../../src/server/locale";
@@ -10,6 +12,7 @@ import { localizeTree, translate } from "../../../src/i18n";
 import ActivityGallery from "../../../src/components/ActivityGallery";
 import ActivityReserveButton from "../../../src/components/ActivityReserveButton";
 import { getSiteSeoSettings } from "../../../src/server/site-seo";
+import "../activities-discovery.css";
 
 type ActivityPageProps = {
   params: Promise<{ slug: string }>;
@@ -21,8 +24,21 @@ export async function generateMetadata({ params }: ActivityPageProps): Promise<M
   const [catalog, locale, settings] = await Promise.all([getPublicActivityCatalog(), getLocale(), getSiteSeoSettings()]);
   const activities = localizeTree(catalog, locale);
   const activity = activities.find((item) => item.slug === slug);
+  const experience = getActivityExperience(slug);
 
   if (!activity) {
+    if (experience) {
+      const copy = {
+        title: experience.title[locale],
+        summary: experience.summary[locale],
+      };
+      return {
+        title: copy.title,
+        description: copy.summary,
+        alternates: { canonical: `/activities/${slug}` },
+        openGraph: { type: "website", title: copy.title, description: copy.summary, images: [getActivityImageUrl(experience.image, 1200)] },
+      };
+    }
     return { title: translate(locale, "Activity not found") };
   }
 
@@ -61,6 +77,8 @@ export default async function ActivityDetailPage({ params }: ActivityPageProps) 
   const activity = activities.find((item) => item.slug === slug);
 
   if (!activity) {
+    const experience = getActivityExperience(slug);
+    if (experience) return <ActivityExperienceDetail experience={experience} locale={locale} />;
     notFound();
   }
 

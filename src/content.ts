@@ -11,8 +11,8 @@ export const MEDIA = {
 
 export const NAV_LINKS = [
   { label: "Home", href: "#top" },
-  { label: "Surf Packages", href: "#surf-packages" },
-  { label: "Surf Lessons", href: "#surf-lessons" },
+  { label: "Surf Packages", href: "/surf-packages" },
+  { label: "Surf Lessons", href: "/surf-lessons" },
   { label: "Activities", href: "/activities" },
   { label: "About Us", href: "#why-us" },
   { label: "Contact Us", href: "#contact" },
@@ -32,15 +32,15 @@ export const MENU_LINKS = [
 
 /** `from`/`to` are scroll-film progress (0–1). All copy lives inside the first 46%. */
 export const CHAPTERS = [
-  { id: "plan", n: "01", kicker: "Your arrival", title: "A warm welcome. A smooth start.",
-    body: "Your driver is ready when you land, so the first moments of your trip feel easy.",
-    from: 0.13, to: 0.23, pos: "left-5 right-5 bottom-24 md:right-auto md:left-[6vw] md:top-[56%] md:bottom-auto md:w-[28vw]" },
-  { id: "connections", n: "02", kicker: "The little details", title: "Every detail, already considered.",
-    body: "Thoughtful transfers, handpicked stays and local recommendations—connected around you.",
-    from: 0.26, to: 0.36, pos: "left-5 right-5 bottom-24 md:left-auto md:right-[6vw] md:top-[20%] md:bottom-auto md:w-[27vw]" },
-  { id: "follow", n: "03", kicker: "Your Morocco", title: "Arrive curious. Leave with stories.",
-    body: "Make space for the places, people and experiences you came all this way to discover.",
-    from: 0.39, to: 0.46, pos: "left-5 right-5 bottom-24 md:right-auto md:left-[9vw] md:top-[30%] md:bottom-auto md:w-[26vw]" },
+  { id: "plan", n: "01", align: "left", kicker: "The journey begins", title: "A better kind of arrival.",
+    body: "From airport pickup to your first easy morning, the details are already in hand.",
+    from: 0.13, to: 0.23, pos: "left-5 right-5 bottom-24 md:right-auto md:left-[8vw] md:top-[54%] md:bottom-auto md:w-[32vw]" },
+  { id: "connections", n: "02", align: "right", kicker: "The little things", title: "Thoughtful from the first hello.",
+    body: "Handpicked stays, considered transfers and local recommendations, connected around your trip.",
+    from: 0.26, to: 0.36, pos: "left-5 right-5 bottom-24 md:left-auto md:right-[8vw] md:top-[17%] md:bottom-auto md:w-[32vw]" },
+  { id: "follow", n: "03", align: "left", kicker: "Your Morocco, your way", title: "Leave room for the unexpected.",
+    body: "A hidden café, a longer sunset, one more wave. Find the Morocco that feels like yours.",
+    from: 0.39, to: 0.46, pos: "left-5 right-5 bottom-24 md:right-auto md:left-[11vw] md:top-[27%] md:bottom-auto md:w-[34vw]" },
 ] as const;
 
 export const ALT = {

@@ -38,13 +38,13 @@ export default function App({ activities, posts, locale, reviews }: { activities
         <ScrollFilm locale={locale} />
         <ScrollMotion>
           <HeroPresentation locale={locale} />
-          <ExperienceGallery activities={activities} locale={locale} />
           <SurfPackagesSection locale={locale} />
           <div className="surf-section-transition" aria-hidden="true" />
           <SurfLessonsSection activities={activities} locale={locale} />
           <div className="surf-section-transition" aria-hidden="true" />
           <ActivitiesAdventuresSection activities={activities} locale={locale} />
           <div className="surf-section-transition" aria-hidden="true" />
+          <ExperienceGallery activities={activities} locale={locale} /> 
           <TeamMembersSection locale={locale} />
           <div className="surf-section-transition" aria-hidden="true" />
           <div className="surf-section-transition" aria-hidden="true" />
