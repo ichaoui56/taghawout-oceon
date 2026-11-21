@@ -2239,6 +2239,7 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
   grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
   grid-template-rows: repeat(2, 225px);
   gap: .8rem;
+  overflow-y: hidden;
   margin-top: 2.3rem;
 }
 
