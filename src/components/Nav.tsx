@@ -16,6 +16,7 @@ export default function Nav() {
   const [activeHref, setActiveHref] = useState("");
   const panel = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
+  const languageMenu = useRef<HTMLDetailsElement>(null);
   const closeTimer = useRef<number | null>(null);
   const homeHref = (href: string) => href.startsWith("/") || pathname === "/" ? href : `/${href}`;
 
@@ -26,6 +27,7 @@ export default function Nav() {
   };
 
   const toggleMenu = () => {
+    if (languageMenu.current) languageMenu.current.open = false;
     if (open) {
       closeMenu();
       return;
@@ -60,6 +62,24 @@ export default function Nav() {
   }, []);
 
   useEffect(() => {
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (languageMenu.current && !languageMenu.current.contains(event.target as Node)) languageMenu.current.open = false;
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && languageMenu.current?.open) {
+        languageMenu.current.open = false;
+        languageMenu.current.querySelector("summary")?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
     const root = panel.current!;
     const items = () => Array.from(root.querySelectorAll<HTMLElement>("a[href], button"));
@@ -87,10 +107,10 @@ export default function Nav() {
     <>
       <header className={`site-nav fixed inset-x-0 top-0 z-[100] text-paper${scrolled ? " site-nav--scrolled" : pathname !== "/" ? " site-nav--interior" : ""}${open ? " site-nav--menu-open" : ""}`}>
         <div className="site-nav__inner flex h-16 items-center justify-between gap-6">
-          <div className="flex items-center gap-8">
-            <Logo href={pathname === "/" ? "#top" : "/#top"} compact={scrolled} tone={scrolled || open ? "blue" : "white"} />
+          <div className="site-nav__brand flex min-w-0 items-center">
+            <Logo href={pathname === "/" ? "#top" : "/#top"} compact={scrolled} tone={scrolled || open || pathname !== "/" ? "blue" : "white"} />
           </div>
-          <nav aria-label={t("Primary navigation")} className="site-nav__actions">
+          <nav aria-label={t("Primary navigation")} className="site-nav__desktop-nav">
             <ul className="site-nav__links">
               {NAV_LINKS.map((l) => (
                 <li key={l.href}>
@@ -104,17 +124,27 @@ export default function Nav() {
                 </li>
               ))}
             </ul>
-            <Link href={homeHref("#transfer")} className="site-nav__book hidden whitespace-nowrap bg-signal px-4 py-3 text-[11px] font-bold uppercase tracking-wide text-paper transition hover:bg-paper hover:text-ink sm:inline-flex">
-              {t("Book now")} <span className="ml-3" aria-hidden="true">↗</span>
+          </nav>
+          <div className="site-nav__actions">
+            <Link href={homeHref("#transfer")} className="site-nav__book">
+              <span>{t("Plan your adventure")}</span>
+              <span className="site-nav__book-arrow" aria-hidden="true">↗</span>
             </Link>
-            <div className={`site-language-switch${locale === "fr" ? " site-language-switch--fr" : ""}`} role="group" aria-label={t("Choose language")}>
-              <span className="site-language-switch__indicator" aria-hidden="true" />
-              {(["en", "fr"] as const).map((option) => (
-                <button key={option} type="button" aria-label={option === "en" ? "English" : "Français"} aria-pressed={locale === option} onClick={() => setLocale(option)}>
-                  {option.toUpperCase()}
+            <details ref={languageMenu} className="site-language-dropdown">
+              <summary aria-label={`${t("Choose language")}: ${locale.toUpperCase()}`}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M3.5 9h17M3.5 15h17M12 3c2.4 2.5 3.5 5.5 3.5 9s-1.1 6.5-3.5 9c-2.4-2.5-3.5-5.5-3.5-9S9.6 5.5 12 3Z" /></svg>
+                <span>{locale.toUpperCase()}</span>
+                <svg className="site-language-dropdown__chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m3.5 6 4.5 4 4.5-4" /></svg>
+              </summary>
+              <div className="site-language-dropdown__options" role="group" aria-label={t("Choose language")}>
+                <button type="button" aria-pressed={locale === "en"} onClick={() => { setLocale("en"); if (languageMenu.current) languageMenu.current.open = false; }}>
+                  <span>English</span><span>EN</span>
                 </button>
-              ))}
-            </div>
+                <button type="button" aria-pressed={locale === "fr"} onClick={() => { setLocale("fr"); if (languageMenu.current) languageMenu.current.open = false; }}>
+                  <span>Français</span><span>FR</span>
+                </button>
+              </div>
+            </details>
             <button
               ref={trigger}
               type="button"
@@ -124,9 +154,9 @@ export default function Nav() {
               onClick={toggleMenu}
               className="site-nav__menu"
             >
-              <span className="site-nav__burger" aria-hidden="true"><span /><span /></span>
+              <span className="site-nav__burger" aria-hidden="true"><span /><span /><span /></span>
             </button>
-          </nav>
+          </div>
         </div>
       </header>
 
