@@ -2850,12 +2850,12 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
   .surf-package-card h3 { font-size: 1.3rem; }
   .surf-package-card__content > p { font-size: .63rem; }
   .surf-lessons__layout { grid-template-columns: minmax(0, 1fr); gap: .8rem; }
-  .surf-lessons__intro { grid-column: 1; width: 100%; max-width: 35rem; }
+  .surf-lessons__intro { grid-column: 1; grid-row: 1; width: 100%; max-width: 35rem; }
   .surf-lessons__intro > p { margin: .55rem 0 .75rem; font-size: .68rem; }
   .surf-lessons__atmosphere { top: -1rem; bottom: auto; left: -1rem; width: calc(100% + 2rem); height: 340px; clip-path: polygon(0 0, 100% 0, 100% 82%, 95% 88%, 87% 90%, 7% 100%, 0 96%); }
   .surf-lessons__atmosphere::after { background: linear-gradient(90deg, rgb(7 54 74 / 28%), rgb(7 54 74 / 46%) 58%, rgb(7 54 74 / 78%)), linear-gradient(0deg, #07364a 0%, transparent 58%); }
   .surf-lessons__intro { padding-block: .6rem 1rem; }
-  .surf-lessons__options { grid-column: 1; grid-auto-columns: min(78vw, 340px); }
+  .surf-lessons__options { grid-column: 1; grid-row: 2; grid-auto-columns: min(78vw, 340px); }
   .surf-lesson-option,
   .surf-lesson-option:nth-child(2) { height: 300px; transform: none; scroll-snap-align: start; }
   .surf-lesson-option:hover { transform: translateY(-.2rem); }
@@ -9948,6 +9948,8 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
 }
 
 @media (max-width: 700px) {
+  #why-us { margin-bottom: 2rem; }
+
   .contact-page {
     padding-top: 6.3rem;
     padding-inline: 1.15rem;
@@ -9981,9 +9983,9 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
   background-image:
     linear-gradient(90deg, rgb(248 252 254 / 80%) 0%, rgb(248 252 254 / 58%) 34%, rgb(248 252 254 / 13%) 72%, rgb(248 252 254 / 24%) 100%),
     linear-gradient(180deg, rgb(248 252 254 / 12%) 0%, transparent 54%, rgb(248 252 254 / 15%) 76%, #f8fcfe 100%),
-    url("/Moroccan%20Coastal%20Travel%20Panorama.webp");
+    url("/contact/contact-section-desktop.png");
   background-position: center, center, center 46%;
-  background-size: cover;
+  background-size: contain;
   color: #073b59;
 }
 
@@ -10324,7 +10326,6 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
   .contact-page__hero { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 1.5rem; }
   .contact-inquiry__copy h1 { font-size: 4.5rem; }
   .contact-page__info { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .contact-page__info-signature { text-align: left; }
 }
 
 @media (max-width: 700px) {
@@ -10332,7 +10333,7 @@ dialog::backdrop { background: color-mix(in srgb, var(--color-ink) 80%, transpar
     padding: 6.25rem 1rem 0;
     background-image:
       linear-gradient(180deg, rgb(248 252 254 / 55%) 0%, rgb(248 252 254 / 43%) 43%, rgb(248 252 254 / 78%) 100%),
-      url("/Moroccan%20Coastal%20Travel%20Panorama.webp");
+      url("/contact/contact-section-mobile.png");
     background-position: center, 18% center;
     background-size: cover;
   }

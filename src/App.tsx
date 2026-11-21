@@ -44,16 +44,13 @@ export default function App({ activities, posts, locale, reviews }: { activities
           <SurfLessonsSection activities={activities} locale={locale} />
           <div className="surf-section-transition" aria-hidden="true" />
           <ActivitiesAdventuresSection activities={activities} locale={locale} />
-                    <div className="surf-section-transition" aria-hidden="true" />
-
+          <div className="surf-section-transition" aria-hidden="true" />
           <TeamMembersSection locale={locale} />
-                    <div className="surf-section-transition" aria-hidden="true" />
           <div className="surf-section-transition" aria-hidden="true" />
-
+          <div className="surf-section-transition" aria-hidden="true" />
           <BlogSection locale={locale} posts={posts} />
-                    <div className="surf-section-transition" aria-hidden="true" />
           <div className="surf-section-transition" aria-hidden="true" />
-
+          <div className="surf-section-transition" aria-hidden="true" />
           <GoogleReviews data={reviews} locale={locale} />
           <WhyChooseUs locale={locale} />
         </ScrollMotion>
