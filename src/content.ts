@@ -1,30 +1,29 @@
 const base = "https://media.scrollhaus.ai/sites/freight-forward/assets/";
 
 export const MEDIA = {
-  film: "/Aerial_drone_video_of_resort_a253ca43_1080p_scrub.mp4",
+  film: "/entry-film.mp4",
   filmAlt: `${base}e8eb434f-d097-4b1b-b9e6-c8b46fa43040.mp4`,
-  poster: "/aerial_resort_1080p_poster.jpg",
+  poster: "/morocco_scroll_poster.jpg",
   terminal: `${base}terminal.jpg`,
   port: `${base}port.jpg`,
   warehouse: `${base}warehouse.jpg`,
 } as const;
 
 export const NAV_LINKS = [
-  { label: "Airport transfers", href: "#transfer" },
-  { label: "Places to stay", href: "#stays" },
-  { label: "Experiences", href: "#experiences" },
-  { label: "Notre Histoire", href: "#concierge" },
-  { label: "How it works", href: "#journey" },
-  { label: "Travel journal", href: "#journal" },
-  { label: "Why choose us", href: "#why-us" },
-  { label: "Plan your trip", href: "#contact" },
+  { label: "Home", href: "#top" },
+  { label: "Surf Packages", href: "#surf-packages" },
+  { label: "Surf Lessons", href: "#surf-lessons" },
+  { label: "Activities", href: "/activities" },
+  { label: "About us", href: "#why-us" },
+  { label: "Contact Us", href: "#contact" },
+  { label: "Blog", href: "#journal" },
 ];
 
 export const MENU_LINKS = [
-  { n: "01", label: "Airport transfers", href: "#transfer" },
-  { n: "02", label: "Places to stay", href: "#stays" },
-  { n: "03", label: "Experiences", href: "#experiences" },
-  { n: "04", label: "Notre Histoire", href: "#concierge" },
+  { n: "01", label: "Taghazout Ocean", href: "#ocean-experience" },
+  { n: "02", label: "Surf Packages", href: "#surf-packages" },
+  { n: "03", label: "Surf Lessons", href: "#surf-lessons" },
+  { n: "04", label: "Activities & Adventures", href: "#activities-adventures" },
   { n: "05", label: "How it works", href: "#journey" },
   { n: "06", label: "Travel journal", href: "#journal" },
   { n: "07", label: "Why choose us", href: "#why-us" },

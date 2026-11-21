@@ -1,10 +1,25 @@
 import type { Metadata, Viewport } from "next";
+import { Barlow_Condensed, DM_Sans } from "next/font/google";
 import { getLocale } from "../src/server/locale";
 import "../src/index.css";
 import { ActivityReservationProvider } from "../src/components/ActivityReservations";
 import { LocaleProvider } from "../src/components/LocaleProvider";
 import { getSeoImageUrl } from "../src/seo";
 import { getSiteSeoSettings } from "../src/server/site-seo";
+
+const bodyFont = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
+const displayFont = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-barlow-condensed",
+  display: "swap",
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const [locale, settings] = await Promise.all([getLocale(), getSiteSeoSettings()]);
@@ -46,7 +61,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#f4f1e9",
+  themeColor: "#f5fafc",
 };
 
 export default async function RootLayout({
@@ -70,16 +85,10 @@ export default async function RootLayout({
     ],
   }).replace(/</g, "\\u003c");
   return (
-    <html lang={locale}>
+    <html lang={locale} className={`${bodyFont.variable} ${displayFont.variable}`}>
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body>
         <LocaleProvider initialLocale={locale}>

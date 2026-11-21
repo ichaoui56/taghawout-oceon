@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Activity } from "../activities";
 import { getActivityImageUrl } from "../activities";
 import ActivityReserveButton from "./ActivityReserveButton";
@@ -14,9 +14,17 @@ type ActivityDirectoryProps = {
 
 export default function ActivityDirectory({ activities, locale }: ActivityDirectoryProps) {
   const t = (phrase: string) => translate(locale, phrase);
-  const categories = ["All", ...new Set(activities.map((activity) => activity.category))];
+  const categories = useMemo(() => ["All", ...new Set(activities.map((activity) => activity.category))], [activities]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const requestedCategory = params.get("category");
+    setActiveCategory(requestedCategory && categories.includes(requestedCategory) ? requestedCategory : "All");
+    setSearchTerm(params.get("search") ?? "");
+  }, [categories]);
+
   const filteredActivities = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
 

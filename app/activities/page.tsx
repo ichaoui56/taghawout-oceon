@@ -37,7 +37,7 @@ export default async function ActivitiesPage() {
       <Nav />
       <main className="activities-page min-h-screen px-5 pb-20 pt-28 text-ink md:px-[4vw] md:pt-36">
         <div className="mx-auto max-w-[1500px]">
-          <Link href="/#experiences" className="activity-back-link">
+          <Link href="/#activities-adventures" className="activity-back-link">
             <span aria-hidden="true">←</span> {t("Back to the Morocco journey")}
           </Link>
 

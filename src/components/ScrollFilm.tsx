@@ -24,10 +24,10 @@ function HeroCopy({ opacity = 1, locale }: { opacity?: number; locale: Locale })
         <span className="block whitespace-nowrap text-signal">{t("Hero title line four")}</span>
       </h1>
       <p className="mt-5 max-w-md text-sm leading-relaxed text-paper/90 [text-shadow:0_1px_8px_rgb(0_0_0/35%)] md:mt-7 md:text-base">
-        {t("Seamless airport pickup, handpicked stays and unforgettable experiences—all in one premium concierge service.")}
+        Discover surf, stay and experiences on Morocco’s beautiful Atlantic coast.
       </p>
-      <Link href="#transfer" className="mt-6 inline-flex items-center gap-5 bg-signal px-5 py-3 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-paper hover:text-ink md:mt-8">
-        {t("Plan your arrival")} <span aria-hidden="true">↓</span>
+      <Link href="#ocean-experience" className="mt-6 inline-flex items-center gap-5 bg-signal px-5 py-3 text-[11px] font-bold uppercase tracking-wide text-paper transition-colors hover:bg-paper hover:text-ink md:mt-8">
+        Explore Taghazout <span aria-hidden="true">↓</span>
       </Link>
     </div>
   );
@@ -47,7 +47,7 @@ export default function ScrollFilm({ locale }: { locale: Locale }) {
 
   if (reduced) {
     return (
-      <section id="top" aria-label={translate(locale, "Morocco Journeys introduction")} className="bg-ink">
+      <section id="top" aria-label={translate(locale, "Morocco Journeys introduction")} className="scroll-film relative z-[50] isolate bg-ink">
         <div className="relative min-h-svh overflow-hidden">
           <img src={MEDIA.poster} alt="An aerial view of a private car approaching a Moroccan resort" className="absolute inset-0 h-full w-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-ink/25 to-transparent" />
@@ -63,8 +63,8 @@ export default function ScrollFilm({ locale }: { locale: Locale }) {
   }
 
   return (
-    <section id="top" ref={runway} aria-label={translate(locale, "Morocco travel film, scrubbed by scrolling")} className="relative h-[320svh] bg-ink md:h-[400svh]">
-      <div className="sticky top-0 h-svh overflow-hidden">
+    <section id="top" ref={runway} aria-label={translate(locale, "Morocco travel film, scrubbed by scrolling")} className="scroll-film relative z-[50] isolate h-[320svh] bg-ink md:h-[400svh]">
+      <div className="sticky top-0 z-[50] h-svh overflow-hidden">
         <video
           ref={video}
           poster={MEDIA.poster}

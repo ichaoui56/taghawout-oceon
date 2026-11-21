@@ -6,6 +6,17 @@ import { sendContactMessage } from "../server/contact-actions";
 
 export default function ContactForm({ locale }: { locale: Locale }) {
   const t = (phrase: string) => translate(locale, phrase);
+  const formIntro = locale === "fr"
+    ? {
+      eyebrow: "ENVOYEZ-NOUS UN MESSAGE",
+      heading: "Nous serions ravis de vous lire !",
+      description: "Remplissez le formulaire et notre équipe vous répondra dès que possible.",
+    }
+    : {
+      eyebrow: "DROP US A MESSAGE",
+      heading: "We’d love to hear from you!",
+      description: "Fill out the form below and we’ll get back to you as soon as possible.",
+    };
   const [isPending, startTransition] = useTransition();
   const [notice, setNotice] = useState<{ success: boolean; message: string } | null>(null);
 
@@ -29,7 +40,17 @@ export default function ContactForm({ locale }: { locale: Locale }) {
   }
 
   return (
-    <form className="contact-inquiry__form" onSubmit={submit}>
+    <form id="contact-form" className="contact-inquiry__form" onSubmit={submit}>
+      <div className="contact-inquiry__form-head">
+        <span className="contact-inquiry__form-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="m21 3-7.5 18-3.8-7.7L2 9.5 21 3Z" /><path d="M9.7 13.3 21 3" /></svg>
+        </span>
+        <div>
+          <p>{formIntro.eyebrow}</p>
+          <h2>{formIntro.heading}</h2>
+          <span>{formIntro.description}</span>
+        </div>
+      </div>
       <div className="contact-inquiry__fields">
         <label className="contact-inquiry__field">
           <span className="sr-only">{t("Your name")}</span>
@@ -58,9 +79,10 @@ export default function ContactForm({ locale }: { locale: Locale }) {
       </div>
       <div className="contact-inquiry__submit-row">
         <button className="button-signal contact-inquiry__submit" type="submit" disabled={isPending}>
-          <span>{isPending ? t("Sending message…") : t("Send message")}</span><span aria-hidden="true">{isPending ? "…" : "↗"}</span>
+          <span>{isPending ? t("Sending message…") : t("Send message")}</span>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m21 3-7.5 18-3.8-7.7L2 9.5 21 3Z" /><path d="M9.7 13.3 21 3" /></svg>
         </button>
-        <p>{t("We’ll get back to you as soon as possible.")}</p>
+        <p><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>{t("We’ll get back to you as soon as possible.")}</p>
       </div>
       {notice && (
         <p className={`contact-inquiry__notice${notice.success ? " is-success" : " is-error"}`} role={notice.success ? "status" : "alert"}>

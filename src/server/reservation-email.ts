@@ -49,9 +49,9 @@ type ActivityReservationNotice = {
   }>;
 };
 
-const ink = "#1e2222";
-const paper = "#f4f1e9";
-const signal = "#f15b40";
+const ink = "#102a36";
+const paper = "#f5fafc";
+const signal = "#007ca3";
 
 function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, (character) => ({
