@@ -53,6 +53,7 @@ function ReviewIllustration({ kind }: { kind: "palm" | "quad" | "camel" }) {
   );
 }
 
+
 const reviewScenes = ["palm", "quad", "camel"] as const;
 
 function ReviewCard({ review, locale, t, index }: { review: GoogleReview; locale: Locale; t: (phrase: string) => string; index: number }) {
