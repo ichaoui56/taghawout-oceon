@@ -20,7 +20,11 @@ export default function ActivityDirectory({ activities, experiences, locale }: {
 
   const query = searchTerm.trim().toLocaleLowerCase(locale);
   const filteredExperiences = experiences.filter((experience) => {
-    const copy = experience[locale];
+    const copy = {
+      title: experience.title[locale],
+      category: experience.category[locale],
+      summary: experience.summary[locale],
+    };
     const matchesCategory = activeCategory === "All" || copy.category === activeCategory;
     const matchesSearch = !query || [copy.title, copy.category, copy.summary].some((value) => value.toLocaleLowerCase(locale).includes(query));
     return matchesCategory && matchesSearch;

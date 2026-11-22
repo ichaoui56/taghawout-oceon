@@ -224,7 +224,6 @@ const french: Record<string, string> = {
   "A little inspiration": "Un peu d’inspiration",
   "More from the journal": "À lire dans le carnet",
   "stories": "récits",
-  "Your Morocco, your way": "Votre Maroc, à votre façon",
   "Make the journey your own.": "Faites de ce voyage le vôtre.",
   "From the first arrival to the last sunset, we’re here to help you find your rhythm.": "De votre arrivée au dernier coucher de soleil, nous sommes là pour vous aider à trouver votre rythme.",
   "Plan your trip": "Préparer votre voyage",
