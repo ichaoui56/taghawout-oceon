@@ -182,7 +182,7 @@ export default function SurfLessonsPage() {
             <p className="lessons-eyebrow">{french ? "À VOUS LA PROCHAINE VAGUE" : "YOUR NEXT WAVE IS WAITING"}</p>
             <h2 id="lessons-final-title">{french ? "VOTRE PROCHAINE AVENTURE SURF VOUS ATTEND" : "YOUR NEXT SURF ADVENTURE IS WAITING"}</h2>
             <p>{french ? "Découvrez le surf à Taghazout et la magie de la côte atlantique marocaine." : "Discover the perfect surf holiday and experience the magic of Morocco’s Atlantic coast."}</p>
-            <Link className="lessons-button lessons-button--light" href="/#contact">{french ? "PRÉPARER VOTRE AVENTURE" : "PLAN YOUR ADVENTURE"}<span aria-hidden="true">→</span></Link>
+            <Link className="lessons-button lessons-button--light" href="/#contact">{french ? "PRÉPARER VOTRE AVENTURE" : "Explore"}<span aria-hidden="true">→</span></Link>
           </div>
         </section>
       </main>

@@ -209,7 +209,7 @@ const french: Record<string, string> = {
   "unforgettable.": "un moment inoubliable.",
   "Reserve your pickup": "Réserver votre transfert",
   "Read the journal": "Lire le carnet",
-  "More than a trip. A journey.": "Plus qu’un séjour. Un voyage.",
+  "More than a trip. An ocean adventure.": "Bien plus qu’un séjour. Une aventure océane.",
   "Website made by": "Site web réalisé par",
   "Back to the beginning ↑": "Retour au début ↑",
   "Back to the beginning": "Retour au début",

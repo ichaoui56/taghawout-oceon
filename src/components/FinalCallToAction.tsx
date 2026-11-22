@@ -110,9 +110,8 @@ export default function FinalCallToAction({ locale }: { locale: Locale }) {
           ))}
           <p className="contact-page__info-signature">{text.signature}<span aria-hidden="true" /></p>
         </div>
-
-        <SiteFooter locale={locale} />
       </div>
+      <SiteFooter locale={locale} />
     </section>
   );
 }

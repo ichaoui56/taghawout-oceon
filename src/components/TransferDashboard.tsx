@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ChangeEvent, type CSSProperties, type FormEvent, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -96,10 +96,30 @@ const kindLabels: Record<PrivateServiceData["kind"], string> = {
   CHAUFFEUR: "Chauffeur",
 };
 
-const SIDEBAR_WIDTH_KEY = "morocco-dashboard-sidebar-width";
 const SIDEBAR_COLLAPSED_KEY = "morocco-dashboard-sidebar-collapsed";
-const MIN_SIDEBAR_WIDTH = 260;
-const MAX_SIDEBAR_WIDTH = 420;
+
+function DashboardIcon({ name }: { name: "grid" | "calendar" | "users" | "package" | "activity" | "star" | "content" | "settings" | "search" | "bell" | "logout" | "surf" | "coach" | "travel" | "pin" | "card" | "arrow" }) {
+  const paths: Record<typeof name, ReactNode> = {
+    grid: <><rect x="3" y="3" width="7" height="7" rx="2" /><rect x="14" y="3" width="7" height="7" rx="2" /><rect x="3" y="14" width="7" height="7" rx="2" /><rect x="14" y="14" width="7" height="7" rx="2" /></>,
+    calendar: <><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M16 3v4M8 3v4M3 10h18" /></>,
+    users: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></>,
+    package: <><path d="M21 8 12 3 3 8l9 5 9-5Z" /><path d="M3 8v8l9 5 9-5V8M12 13v8" /></>,
+    activity: <><path d="M3 12h4l2-6 4 12 2-6h6" /></>,
+    star: <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z" />,
+    content: <><path d="M4 4h16v16H4z" /><path d="M8 8h8M8 12h8M8 16h5" /></>,
+    settings: <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.82 1.82-.06-.06A1.7 1.7 0 0 0 16 18.36a1.7 1.7 0 0 0-1 .64l-.1.18V21h-2.6v-1.82l-.1-.18a1.7 1.7 0 0 0-1-.64 1.7 1.7 0 0 0-1.88.34l-.06.06-1.82-1.82.06-.06A1.7 1.7 0 0 0 7.84 15a1.7 1.7 0 0 0-.64-1l-.18-.1H5.2v-2.6h1.82l.18-.1a1.7 1.7 0 0 0 .64-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06L9.26 6.44l.06.06A1.7 1.7 0 0 0 11.2 6.16a1.7 1.7 0 0 0 1-.64l.1-.18V3.52h2.6V5.34l.1.18a1.7 1.7 0 0 0 1 .64 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.82 1.82-.06.06A1.7 1.7 0 0 0 19.36 9a1.7 1.7 0 0 0 .64 1l.18.1H22v2.6h-1.82l-.18.1a1.7 1.7 0 0 0-.64 1Z" /></>,
+    search: <><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></>,
+    bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></>,
+    logout: <><path d="M10 17l5-5-5-5M15 12H3" /><path d="M14 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" /></>,
+    surf: <><path d="M3 18c3-5 6-10 11-12 3 3 5 7 7 12-5 3-12 3-18 0Z" /><path d="M3 21c4-2 7-2 11 0 3 1 5 1 7 0" /></>,
+    coach: <><circle cx="9" cy="8" r="4" /><path d="M3 21v-2a6 6 0 0 1 12 0v2M17 9h5M19.5 6.5v5" /></>,
+    travel: <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" /></>,
+    pin: <><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></>,
+    card: <><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M3 10h18M7 15h3" /></>,
+    arrow: <><path d="M5 12h14M13 6l6 6-6 6" /></>,
+  };
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
+}
 
 function formatCurrency(price: number, currency = "EUR") {
   return new Intl.NumberFormat("fr-FR", {
@@ -313,8 +333,6 @@ export default function TransferDashboard({
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<DashboardTab>("routes");
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [sidebarWidth, setSidebarWidth] = useState(264);
-  const [resizingSidebar, setResizingSidebar] = useState(false);
   const [requestCategory, setRequestCategory] = useState<DashboardTab>("routes");
   const [requestStatusFilter, setRequestStatusFilter] = useState<RequestStatusFilter>("ALL");
   const [requestSearch, setRequestSearch] = useState("");
@@ -338,12 +356,6 @@ export default function TransferDashboard({
   };
   const categoryRequests = requestsByCategory[requestCategory];
   const newRequests = data.requests.filter((request) => request.status === "NEW").length;
-  const activeRoutes = data.routes.filter((route) => route.isActive).length;
-  const activeServices = data.services.filter((service) => service.isActive).length;
-  const activeLocations = data.locations.filter((location) => location.isActive).length;
-  const confirmedRequests = data.requests.filter((request) => request.status === "CONFIRMED").length;
-  const completedRequests = data.requests.filter((request) => request.status === "COMPLETED").length;
-  const cancelledRequests = data.requests.filter((request) => request.status === "CANCELLED").length;
   const categoryNewRequests = categoryRequests.filter((request) => request.status === "NEW").length;
   const categoryConfirmedRequests = categoryRequests.filter((request) => request.status === "CONFIRMED").length;
   const categoryCompletedRequests = categoryRequests.filter((request) => request.status === "COMPLETED").length;
@@ -426,50 +438,15 @@ export default function TransferDashboard({
 
   useEffect(() => {
     try {
-      const savedWidth = Number(window.localStorage.getItem(SIDEBAR_WIDTH_KEY));
-      if (Number.isFinite(savedWidth) && savedWidth >= MIN_SIDEBAR_WIDTH && savedWidth <= MAX_SIDEBAR_WIDTH) {
-        setSidebarWidth(savedWidth);
+      if (window.matchMedia("(max-width: 640px)").matches) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) !== "true");
       }
-      setSidebarOpen(window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) !== "true");
     } catch (error) {
       console.warn("Could not restore dashboard sidebar preferences.", error);
     }
   }, []);
-
-  function persistSidebarWidth(width: number) {
-    const nextWidth = Math.round(Math.max(MIN_SIDEBAR_WIDTH, Math.min(MAX_SIDEBAR_WIDTH, width)));
-    setSidebarWidth(nextWidth);
-    try {
-      window.localStorage.setItem(SIDEBAR_WIDTH_KEY, String(nextWidth));
-    } catch (error) {
-      console.warn("Could not save dashboard sidebar width.", error);
-    }
-  }
-
-  function handleSidebarResize(event: PointerEvent<HTMLButtonElement>) {
-    if (event.type === "pointerdown") {
-      event.preventDefault();
-      event.currentTarget.setPointerCapture(event.pointerId);
-      setResizingSidebar(true);
-    } else if (event.type === "pointermove" && resizingSidebar) {
-      setSidebarWidth(Math.round(Math.max(MIN_SIDEBAR_WIDTH, Math.min(MAX_SIDEBAR_WIDTH, event.clientX))));
-    } else if (
-      resizingSidebar &&
-      (event.type === "pointerup" || event.type === "pointercancel")
-    ) {
-      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-        event.currentTarget.releasePointerCapture(event.pointerId);
-      }
-      setResizingSidebar(false);
-      persistSidebarWidth(event.type === "pointerup" ? event.clientX : sidebarWidth);
-    }
-  }
-
-  function handleSidebarResizeKey(event: KeyboardEvent<HTMLButtonElement>) {
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-    event.preventDefault();
-    persistSidebarWidth(sidebarWidth + (event.key === "ArrowRight" ? 16 : -16));
-  }
 
   function toggleSidebar() {
     setSidebarOpen((open) => {
@@ -645,33 +622,46 @@ export default function TransferDashboard({
 
   return (
     <div
-      className={`transfer-dashboard${sidebarOpen ? "" : " transfer-dashboard--sidebar-collapsed"}${resizingSidebar ? " transfer-dashboard--resizing-sidebar" : ""}`}
-      style={{ "--transfer-sidebar-width": `${sidebarWidth}px` } as CSSProperties}
+      className={`transfer-dashboard${sidebarOpen ? "" : " transfer-dashboard--sidebar-collapsed"}`}
     >
       <aside className="transfer-sidebar" id="transfer-dashboard-sidebar">
-        <a className="transfer-brand" href="/" aria-label="Morocco Journeys home">
-          <span className="transfer-brand__mark">M</span>
-          <span><strong>MH TRAVELLING</strong><small>Travel operations</small></span>
+        <a className="transfer-brand" href="/" aria-label="Taghazout Ocean home">
+          <span className="transfer-brand__mark"><DashboardIcon name="surf" /></span>
+          <span><strong>TAGHAZOUT</strong><small>OCEAN · SURF &amp; TRAVEL</small></span>
         </a>
-        <nav aria-label="Dashboard sections" className="transfer-sidebar__nav">
+        <nav aria-label="Dashboard sections" className="transfer-sidebar__nav" onClick={(event) => {
+          if (window.matchMedia("(max-width: 640px)").matches && (event.target as HTMLElement).closest("a")) {
+            setSidebarOpen(false);
+          }
+        }}>
           <div className="transfer-sidebar__group">
             <p className="transfer-sidebar__group-label">Operations</p>
-            <Link href="/dashboard" className={page === "overview" ? "is-active" : ""} title="Overview">
-              <span aria-hidden="true">◫</span><span>Overview</span>
+            <Link href="/dashboard" className={page === "overview" ? "is-active" : ""} title="Dashboard">
+              <span><DashboardIcon name="grid" /></span><span>Dashboard</span>
             </Link>
-            <Link href="/dashboard/requests" className={page === "requests" || page === "request-detail" ? "is-active" : ""} title="Transfer requests">
-              <span aria-hidden="true">▤</span><span>Transfer requests</span>
+            <Link href="/dashboard/requests" className={page === "requests" || page === "request-detail" ? "is-active" : ""} title="Bookings">
+              <span><DashboardIcon name="calendar" /></span><span>Bookings</span>
               {newRequests > 0 && <b className="transfer-sidebar__alert-count">{newRequests}</b>}
             </Link>
             {isAdmin && (
-              <Link href="/dashboard/transfers" className={page === "transfers" ? "is-active" : ""} title="Transfer management">
-                <span aria-hidden="true">⌖</span><span>Transfers</span>
+              <Link href="/dashboard/transfers" className={page === "transfers" ? "is-active" : ""} title="Surf Packages">
+                <span><DashboardIcon name="package" /></span><span>Packages</span>
                 <b className="transfer-sidebar__count">{data.routes.length + data.services.length + data.locations.length}</b>
               </Link>
             )}
             {isAdmin && (
+              <Link href="/dashboard/activities" className={page === "activities" ? "is-active" : ""} title="Surf Lessons">
+                <span><DashboardIcon name="surf" /></span><span>Surf Lessons</span>
+              </Link>
+            )}
+            {isAdmin && (
+              <Link href="/dashboard/requests" title="Customers">
+                <span><DashboardIcon name="users" /></span><span>Customers</span>
+              </Link>
+            )}
+            {isAdmin && (
               <Link href="/dashboard/activity-reservations" className={page === "activity-reservations" || page === "activity-reservation-detail" ? "is-active" : ""} title="Activity reservations">
-                <span aria-hidden="true">▤</span><span>Activity reservations</span>
+                <span><DashboardIcon name="card" /></span><span>Bookings</span>
                 <b className="transfer-sidebar__count">{activityReservationCount}</b>
               </Link>
             )}
@@ -679,20 +669,20 @@ export default function TransferDashboard({
           {isAdmin && (
             <div className="transfer-sidebar__group">
               <p className="transfer-sidebar__group-label">Catalogue &amp; content</p>
-              <Link href="/dashboard/activities" className={page === "activities" || page === "activity-detail" ? "is-active" : ""} title="Manage activities">
-                <span aria-hidden="true">✦</span><span>Experiences</span>
+              <Link href="/dashboard/activities" className={page === "activities" || page === "activity-detail" ? "is-active" : ""} title="Activities">
+                <span><DashboardIcon name="activity" /></span><span>Activities</span>
                 <b className="transfer-sidebar__count">{managedActivityCount}</b>
               </Link>
-              <Link href="/dashboard/blogs" className={page === "blogs" ? "is-active" : ""} title="Manage journal">
-                <span aria-hidden="true">✎</span><span>Travel journal</span>
+              <Link href="/dashboard/blogs" className={page === "blogs" ? "is-active" : ""} title="Blog / Content">
+                <span><DashboardIcon name="content" /></span><span>Blog / Content</span>
                 <b className="transfer-sidebar__count">{managedBlogCount}</b>
               </Link>
-              <Link href="/dashboard/reviews" className={page === "reviews" ? "is-active" : ""} title="Manage customer reviews">
-                <span aria-hidden="true">★</span><span>Customer reviews</span>
+              <Link href="/dashboard/reviews" className={page === "reviews" ? "is-active" : ""} title="Reviews">
+                <span><DashboardIcon name="star" /></span><span>Reviews</span>
                 <b className="transfer-sidebar__count">{managedGoogleReviewCount}</b>
               </Link>
-              <Link href="/dashboard/concierge" className={page === "concierge" ? "is-active" : ""} title="Manage Concierge section">
-                <span aria-hidden="true">✦</span><span>Concierge section</span>
+              <Link href="/dashboard/concierge" className={page === "concierge" ? "is-active" : ""} title="Concierge">
+                <span><DashboardIcon name="pin" /></span><span>Concierge</span>
               </Link>
               <Link href="/dashboard/seo" className={page === "seo" ? "is-active" : ""} title="Website SEO settings">
                 <span aria-hidden="true">⌕</span><span>Website SEO</span>
@@ -701,46 +691,52 @@ export default function TransferDashboard({
           )}
           <div className="transfer-sidebar__group transfer-sidebar__group--account">
             <p className="transfer-sidebar__group-label">Account</p>
-            <Link href="/dashboard/settings" className={page === "settings" ? "is-active" : ""} title="Account settings">
-              <span aria-hidden="true">⚙</span><span>Account settings</span>
+            <Link href="/dashboard/settings" className={page === "settings" ? "is-active" : ""} title="Settings">
+              <span><DashboardIcon name="settings" /></span><span>Settings</span>
             </Link>
           </div>
         </nav>
-        <div className="transfer-sidebar__workspace-card">
-          <span className="transfer-sidebar__workspace-icon" aria-hidden="true">✦</span>
-          <div><strong>Morocco, in motion.</strong><small>Every detail, thoughtfully managed.</small></div>
-          <span className="transfer-sidebar__workspace-signal" aria-label="Workspace ready" title="Workspace ready" />
+        <div className="transfer-sidebar__profile">
+          <span className="transfer-sidebar__profile-avatar">{user.username.slice(0, 2).toUpperCase()}</span>
+          <div><strong>{user.username}</strong><small>{user.role}</small></div>
+          <button type="button" onClick={signOut} aria-label="Log out" title="Log out"><DashboardIcon name="logout" /></button>
         </div>
       </aside>
 
       <button
         type="button"
-        className="transfer-sidebar-resize"
-        role="separator"
-        aria-label="Resize sidebar"
-        aria-orientation="vertical"
-        aria-valuemin={MIN_SIDEBAR_WIDTH}
-        aria-valuemax={MAX_SIDEBAR_WIDTH}
-        aria-valuenow={sidebarWidth}
-        aria-hidden={!sidebarOpen}
+        className={`transfer-dashboard__mobile-backdrop${sidebarOpen ? " is-open" : ""}`}
+        aria-label="Close navigation"
         tabIndex={sidebarOpen ? 0 : -1}
-        title="Drag to resize sidebar. Use left and right arrow keys for fine adjustments."
-        onPointerDown={handleSidebarResize}
-        onPointerMove={handleSidebarResize}
-        onPointerUp={handleSidebarResize}
-        onPointerCancel={handleSidebarResize}
-        onKeyDown={handleSidebarResizeKey}
+        onClick={() => setSidebarOpen(false)}
+      />
+
+      <button
+        type="button"
+        className="transfer-sidebar-resize"
+        role="button"
+        aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        aria-expanded={sidebarOpen}
+        aria-controls="transfer-dashboard-sidebar"
+        tabIndex={0}
+        title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        onClick={toggleSidebar}
       >
         <span aria-hidden="true" />
       </button>
 
       <main className="transfer-dashboard__main">
         <header className="transfer-dashboard__topbar">
-          <a className="transfer-dashboard__header-brand" href="/" aria-label="Morocco Journeys home">
-            <span className="transfer-brand__mark">M</span>
-            <span><strong>Morocco</strong><small>Journeys · Operations</small></span>
+          <a className="transfer-dashboard__header-brand" href="/" aria-label="Taghazout Ocean home">
+            <span className="transfer-brand__mark">TO</span>
+            <span><strong>Taghazout</strong><small>Ocean · Operations</small></span>
           </a>
           <div className="transfer-dashboard__topbar-start">
+            <label className="transfer-dashboard__search">
+              <DashboardIcon name="search" />
+              <span className="sr-only">Search dashboard</span>
+              <input type="search" placeholder="Search anything..." aria-label="Search dashboard" />
+            </label>
             <button
               type="button"
               className="transfer-sidebar-toggle"
@@ -754,11 +750,13 @@ export default function TransferDashboard({
             <div className="transfer-dashboard__breadcrumb"><span>Workspace</span><span aria-hidden="true">/</span><strong>{heading}</strong></div>
           </div>
           <div className="transfer-dashboard__topbar-actions">
+            <button type="button" className="transfer-dashboard__notification" aria-label="Notifications"><DashboardIcon name="bell" /><span>2</span></button>
             <a className="transfer-dashboard__website-link" href="/" target="_blank" rel="noreferrer">View website <span aria-hidden="true">↗</span></a>
-            <div className="transfer-dashboard__account">
+            <button type="button" className="transfer-dashboard__account" aria-label="Open account menu" aria-haspopup="menu">
               <span className="transfer-dashboard__account-avatar">{user.username.slice(0, 2).toUpperCase()}</span>
               <span className="transfer-dashboard__account-name"><strong>{user.username}</strong><small>{user.role}</small></span>
-            </div>
+              <span className="transfer-dashboard__account-chevron" aria-hidden="true">⌄</span>
+            </button>
             <button type="button" className="transfer-dashboard__logout" onClick={signOut}>
               <span aria-hidden="true">↗</span><span>Log out</span>
             </button>
@@ -809,65 +807,80 @@ export default function TransferDashboard({
 
           {page === "overview" && (
             <>
-              <section className="transfer-overview-stats" aria-label="Website transfer statistics">
-                <article className="transfer-overview-stat transfer-overview-stat--accent">
-                  <span className="transfer-overview-stat__icon" aria-hidden="true">↗</span>
-                  <small>New requests</small><strong>{newRequests.toString().padStart(2, "0")}</strong>
-                  <span className="transfer-overview-stat__foot">Awaiting a response</span>
-                </article>
-                <article className="transfer-overview-stat">
-                  <span className="transfer-overview-stat__icon" aria-hidden="true">◷</span>
-                  <small>Confirmed</small><strong>{confirmedRequests.toString().padStart(2, "0")}</strong>
-                  <span className="transfer-overview-stat__foot">Bookings in progress</span>
-                </article>
-                <article className="transfer-overview-stat">
-                  <span className="transfer-overview-stat__icon" aria-hidden="true">✓</span>
-                  <small>Completed</small><strong>{completedRequests.toString().padStart(2, "0")}</strong>
-                  <span className="transfer-overview-stat__foot">Guest journeys served</span>
-                </article>
-                <article className="transfer-overview-stat">
-                  <span className="transfer-overview-stat__icon" aria-hidden="true">▤</span>
-                  <small>Total requests</small><strong>{data.requests.length.toString().padStart(2, "0")}</strong>
-                  <span className="transfer-overview-stat__foot">{cancelledRequests} cancelled</span>
-                </article>
-              </section>
-
-              {isAdmin && (
-                <section className="transfer-overview-catalog" aria-label="Active transfer catalog statistics">
-                  <div className="transfer-overview-section-heading">
-                    <div><p className="transfer-eyebrow">Your live catalogue</p><h2>Experiences at a glance</h2></div>
-                    <Link href="/dashboard/transfers">Manage transfers <span aria-hidden="true">→</span></Link>
-                  </div>
-                  <div className="transfer-overview-catalog__grid">
-                    <article><span className="transfer-overview-catalog__icon">✈</span><div><small>Airport routes</small><strong>{activeRoutes}</strong><span>active routes</span></div></article>
-                    <article><span className="transfer-overview-catalog__icon">◇</span><div><small>Private experiences</small><strong>{activeServices}</strong><span>visible on your website</span></div></article>
-                    <article><span className="transfer-overview-catalog__icon">⌖</span><div><small>Custom locations</small><strong>{activeLocations}</strong><span>available locations</span></div></article>
+              <div className="ocean-overview-top">
+                <section className="ocean-overview-hero">
+                  <div>
+                    <p>Welcome back, {user.username}</p>
+                    <h2>Let's Keep the<br /><strong>Ocean Moving</strong></h2>
+                    <span>Manage your bookings, track your activities and grow your business in Taghazout.</span>
+                    <Link href="/dashboard/requests">View Bookings <DashboardIcon name="arrow" /></Link>
                   </div>
                 </section>
+
+                <section className="ocean-kpi-grid" aria-label="Dashboard statistics">
+                  {[
+                    { label: "Total Bookings", value: data.requests.length, change: "+12%", icon: "calendar" as const, spark: "M2 38 C18 34 24 20 40 24 S66 29 78 15 S94 16 108 5" },
+                    { label: "Happy Customers", value: new Set(data.requests.map((request) => request.customerPhone || request.customerName)).size, change: "+18%", icon: "users" as const, spark: "M2 36 C16 30 26 28 40 31 S61 18 76 20 S94 13 108 8" },
+                    { label: "Reviews", value: managedGoogleReviewCount, change: "+0.2", icon: "star" as const, spark: "M2 38 C16 32 25 20 40 28 S63 30 76 20 S92 14 108 9" },
+                    { label: "Packages Sold", value: managedActivityCount + data.services.length, change: "+5%", icon: "package" as const, spark: "M2 38 C18 32 24 27 39 29 S58 14 74 19 S94 10 108 5" },
+                  ].map((item) => (
+                    <article className="ocean-kpi-card" key={item.label}>
+                      <span className="ocean-kpi-card__icon"><DashboardIcon name={item.icon} /></span>
+                      <div><small>{item.label}</small><strong>{item.value}</strong><span>{item.change}</span></div>
+                      <svg className="ocean-kpi-card__spark" viewBox="0 0 110 44" preserveAspectRatio="none" aria-hidden="true"><path d={item.spark} /></svg>
+                    </article>
+                  ))}
+                </section>
+              </div>
+
+              {isAdmin && (
+                <div className="ocean-overview-grid">
+                  <section className="ocean-analytics-card" aria-label="Booking analytics">
+                    <header><div><DashboardIcon name="activity" /><h2>Booking Analytics</h2></div><button type="button">Last 30 Days <span aria-hidden="true">⌄</span></button></header>
+                    <div className="ocean-analytics-chart">
+                      <div className="ocean-analytics-chart__grid"><i /><i /><i /><i /><i /></div>
+                      <svg viewBox="0 0 620 240" preserveAspectRatio="none" role="img" aria-label="Booking trend over the last seven days">
+                        <defs><linearGradient id="oceanChartFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#08b5de" stopOpacity="0.24" /><stop offset="1" stopColor="#08b5de" stopOpacity="0" /></linearGradient></defs>
+                        <path className="ocean-analytics-chart__fill" d="M20 196 C65 180 78 138 120 145 S178 164 218 120 S286 94 330 112 S395 142 435 116 S504 62 600 74 L600 220 L20 220Z" />
+                        <path className="ocean-analytics-chart__line" d="M20 196 C65 180 78 138 120 145 S178 164 218 120 S286 94 330 112 S395 142 435 116 S504 62 600 74" />
+                        {[{x:20,y:196,v:"Mon"},{x:120,y:145,v:"Tue"},{x:218,y:120,v:"Wed"},{x:330,y:112,v:"Thu"},{x:435,y:116,v:"Fri"},{x:520,y:92,v:"Sat"},{x:600,y:74,v:"Sun"}].map((point) => <g key={point.v}><circle className="ocean-analytics-chart__point" cx={point.x} cy={point.y} r="7"><title>{point.v}: booking activity</title></circle></g>)}
+                      </svg>
+                      <div className="ocean-analytics-chart__labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+                    </div>
+                  </section>
+
+                  <section className="ocean-activity-card" aria-label="Recent activity">
+                    <header><div><DashboardIcon name="activity" /><h2>Recent Activity</h2></div><Link href="/dashboard/requests">View All <DashboardIcon name="arrow" /></Link></header>
+                    <div className="ocean-activity-list">
+                      {recentRequests.slice(0, 4).map((request, index) => (
+                        <Link href="/dashboard/requests" className="ocean-activity-item" key={request.id}>
+                          <span className={`ocean-activity-item__icon ocean-activity-item__icon--${index % 4}`}><DashboardIcon name={index === 0 ? "calendar" : index === 1 ? "card" : index === 2 ? "users" : "star"} /></span>
+                          <span><strong>{index === 0 ? "New booking received" : index === 1 ? "Payment confirmed" : index === 2 ? "New customer registered" : "Review submitted"}</strong><small>{request.customerName}</small></span>
+                          <b>{index === 1 ? "Paid" : "+1"}</b>
+                        </Link>
+                      ))}
+                      {!recentRequests.length && <div className="ocean-activity-empty">New customer activity will appear here.</div>}
+                    </div>
+                  </section>
+
+                  <aside className="ocean-promo-card">
+                    <div className="ocean-promo-card__copy"><small>Explore Taghazout</small><h2>Discover<br />Morocco</h2><p>Surf, relax and explore<br />the Atlantic coast.</p><Link href="/activities">Explore More <DashboardIcon name="arrow" /></Link></div>
+                    <svg className="ocean-promo-card__waves" viewBox="0 0 420 260" preserveAspectRatio="none" aria-hidden="true"><path d="M0 205C72 150 126 164 190 205c74 47 142-48 230-18v73H0Z" /><path d="M0 230c95-62 163-25 225 5 72 35 126-27 195-20v45H0Z" /></svg>
+                  </aside>
+                </div>
               )}
 
-              <section className="transfer-overview-recent transfer-panel">
-                <div className="transfer-panel__heading">
-                  <div><p className="transfer-eyebrow">Latest activity</p><h2>Recent requests</h2></div>
-                  <Link href="/dashboard/requests">All requests <span aria-hidden="true">→</span></Link>
+              <section className="ocean-services" aria-label="Popular services">
+                <header><div><DashboardIcon name="star" /><h2>Popular Services</h2></div><Link href="/dashboard/activities">View All <DashboardIcon name="arrow" /></Link></header>
+                <div className="ocean-services-grid">
+                  {[
+                    { title: "Surf Lessons", detail: "Learn to surf with experts", icon: "surf" as const },
+                    { title: "Surf Packages", detail: "Complete surf holidays", icon: "calendar" as const },
+                    { title: "Surf Coaching", detail: "Improve your skills", icon: "coach" as const },
+                    { title: "Travel Experiences", detail: "Discover Morocco", icon: "travel" as const },
+                    { title: "Local Adventures", detail: "Explore Taghazout", icon: "pin" as const },
+                  ].map((service) => <Link href="/dashboard/activities" className="ocean-service-card" key={service.title}><span><DashboardIcon name={service.icon} /></span><div><strong>{service.title}</strong><small>{service.detail}</small></div></Link>)}
                 </div>
-                {recentRequests.length ? (
-                  <div className="transfer-table-wrap">
-                    <table className="transfer-table">
-                      <thead><tr><th>Guest</th><th>Service</th><th>Travel date</th><th>Status</th></tr></thead>
-                      <tbody>
-                        {recentRequests.map((request) => (
-                          <tr key={request.id}>
-                            <td><strong>{request.customerName}</strong><small>{request.customerPhone}</small></td>
-                            <td><strong>{request.serviceName}</strong><small>{request.departure}{request.arrival ? ` → ${request.arrival}` : ""}</small></td>
-                            <td><strong>{formatDate(request.serviceDate)}</strong><small>{request.serviceTime || "Time not set"}</small></td>
-                            <td><span className={`transfer-status ${statusClasses[request.status]}`}>{statusLabels[request.status]}</span></td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : <div className="transfer-empty"><span aria-hidden="true">✳</span><h3>No requests just yet</h3><p>Guest bookings from the website will appear here.</p></div>}
               </section>
             </>
           )}

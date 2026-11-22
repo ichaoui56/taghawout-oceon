@@ -72,7 +72,7 @@ export default async function ActivitiesPage() {
             <p className="activities-eyebrow">{french ? "VOTRE PROCHAINE AVENTURE COMMENCE ICI" : "MAKE THIS STAY YOURS"}</p>
             <h2 id="activities-cta-title">{french ? "VOTRE PROCHAINE AVENTURE SURF VOUS ATTEND" : "YOUR NEXT SURF ADVENTURE IS WAITING"}</h2>
             <p>{french ? "Découvrez le séjour surf idéal et la magie de la côte atlantique marocaine." : "Discover the perfect surf holiday and experience the magic of Morocco’s Atlantic coast."}</p>
-            <a href="/#contact" className="activities-button activities-button--light">{french ? "PRÉPARER VOTRE AVENTURE" : "PLAN YOUR ADVENTURE"}<span aria-hidden="true">→</span></a>
+            <a href="/#contact" className="activities-button activities-button--light">{french ? "PRÉPARER VOTRE AVENTURE" : "Explore"}<span aria-hidden="true">→</span></a>
           </div>
         </section>
       </main>

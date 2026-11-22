@@ -228,7 +228,7 @@ export default function SurfPackagesPage() {
           <div className="surf-final-cta__content" data-reveal>
             <h2 id="surf-final-title">{french ? "VOTRE PROCHAINE AVENTURE SURF VOUS ATTEND" : "YOUR NEXT SURF ADVENTURE IS WAITING"}</h2>
             <p>{french ? "Découvrez le séjour surf idéal et la magie de la côte atlantique marocaine." : "Discover the perfect surf holiday and experience the magic of Morocco’s Atlantic coast."}</p>
-            <Link className="surf-button surf-button--light" href="/#contact">{french ? "PRÉPARER VOTRE AVENTURE" : "PLAN YOUR ADVENTURE"}<span aria-hidden="true">→</span></Link>
+            <Link className="surf-button surf-button--light" href="/#contact">{french ? "PRÉPARER VOTRE AVENTURE" : "Explore"}<span aria-hidden="true">→</span></Link>
           </div>
         </section>
       </main>

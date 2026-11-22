@@ -17,6 +17,7 @@ import { translate, type Locale } from "./i18n";
 import type { GoogleReviewsData } from "./server/google-reviews";
 import ExperienceGallery from "./components/ExperienceGallery";
 import HeroPresentation from "./components/HeroPresentation";
+import AboutOceanSection from "./components/AboutOceanSection";
 
 export default function App({ activities, posts, locale, reviews }: { activities: Activity[]; posts: BlogPost[]; locale: Locale; reviews: GoogleReviewsData | null }) {
   return (
@@ -45,6 +46,7 @@ export default function App({ activities, posts, locale, reviews }: { activities
           <ActivitiesAdventuresSection activities={activities} locale={locale} />
           <div className="surf-section-transition" aria-hidden="true" />
           <ExperienceGallery activities={activities} locale={locale} /> 
+          <AboutOceanSection locale={locale} />
           <TeamMembersSection locale={locale} />
           <div className="surf-section-transition" aria-hidden="true" />
           <div className="surf-section-transition" aria-hidden="true" />

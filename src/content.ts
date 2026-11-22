@@ -14,9 +14,9 @@ export const NAV_LINKS = [
   { label: "Surf Packages", href: "/surf-packages" },
   { label: "Surf Lessons", href: "/surf-lessons" },
   { label: "Activities", href: "/activities" },
-  { label: "About Us", href: "#why-us" },
-  { label: "Contact Us", href: "#contact" },
-  { label: "Blog", href: "#journal" },
+  { label: "About Us", href: "/#about-ocean" },
+  { label: "Contact Us", href: "/#contact" },
+  { label: "Blog", href: "/#journal" },
 ];
 
 export const MENU_LINKS = [

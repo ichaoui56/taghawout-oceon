@@ -2,11 +2,11 @@ import Link from "next/link";
 import Logo from "./Logo";
 import { translate, type Locale } from "../i18n";
 
-export default function SiteFooter({ locale }: { locale: Locale }) {
+export default function SiteFooter({ locale, className }: { locale: Locale; className?: string }) {
   const t = (phrase: string) => translate(locale, phrase);
 
   return (
-    <footer className="contact-footer">
+    <footer className={`contact-footer ${className || ""}`}>
       <div className="contact-footer__main">
         <Logo className="on-light" />
         <nav aria-label={t("Footer navigation")} className="contact-footer__nav">
@@ -14,10 +14,10 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
           <Link href="/surf-lessons">{t("Surf Lessons")}</Link>
           <Link href="/activities">{t("Activities")}</Link>
           <Link href="/blogs">{t("Travel journal")}</Link>
-          <Link href="/#why-us">{t("Why choose us")}</Link>
+          <Link href="/#about-ocean">{t("Why choose us")}</Link>
         </nav>
         <div className="contact-footer__aside">
-          <p>{t("More than a trip. A journey.")}</p>
+          <p>{t("More than a trip. An ocean adventure.")}</p>
         </div>
       </div>
       <div className="contact-footer__credit">

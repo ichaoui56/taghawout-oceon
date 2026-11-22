@@ -130,7 +130,7 @@ export default function Nav() {
           </nav>
           <div className="site-nav__actions">
             <Link href={homeHref("#contact")} className="site-nav__book">
-              <span>{t("Plan your adventure")}</span>
+              <span>{t("Explore")}</span>
               <span className="site-nav__book-arrow" aria-hidden="true">↗</span>
             </Link>
             <details ref={languageMenu} className="site-language-dropdown">

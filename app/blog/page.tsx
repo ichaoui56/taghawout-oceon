@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
-import Link from "next/link";
+import Image from "next/image";
 import Nav from "../../src/components/Nav";
-import { formatBlogDate, getBlogImageUrl } from "../../src/blogs";
+import BlogArchiveExperience, { type BlogCardPost } from "../../src/components/BlogArchiveExperience";
+import SiteFooter from "../../src/components/SiteFooter";
+import { getBlogImageUrl } from "../../src/blogs";
 import { getPublicBlogPosts } from "../../src/server/blog-catalog";
 import { getSiteSeoSettings } from "../../src/server/site-seo";
 import { getLocale } from "../../src/server/locale";
-import { localizeTree, translate } from "../../src/i18n";
+import { localizeTree, type Locale } from "../../src/i18n";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [locale, settings] = await Promise.all([getLocale(), getSiteSeoSettings()]);
@@ -27,95 +29,85 @@ export default async function BlogPage() {
   if (process.env.DATABASE_URL) await connection();
   const posts = await getPublicBlogPosts();
   const locale = await getLocale();
-  const t = (phrase: string) => translate(locale, phrase);
-  const localizedPosts = localizeTree(posts, locale);
-  const [featuredPost, ...otherPosts] = [...localizedPosts].sort((first, second) =>
+  const localizedPosts = [...localizeTree(posts, locale)].sort((first, second) =>
     second.publishedAt.localeCompare(first.publishedAt),
   );
+  const archivePosts: BlogCardPost[] = localizedPosts.map((post) => {
+    const image = getBlogImageUrl(post.image, 1200);
+    return {
+      slug: post.slug,
+      title: post.title,
+      category: post.category,
+      excerpt: post.excerpt,
+      image,
+      imageAlt: post.imageAlt,
+      publishedAt: post.publishedAt,
+      readingTime: post.readingTime,
+      imageUnoptimized: !image.startsWith("https://images.unsplash.com/"),
+    };
+  });
+  const localeCopy = getBlogPageCopy(locale);
 
   return (
     <>
       <Nav />
-      <main className="blog-page min-h-screen px-5 pb-20 pt-28 text-ink md:px-[4vw] md:pt-36">
-        <div className="mx-auto max-w-[1500px]">
-          <Link href="/#journal" className="blog-back-link">
-            <span aria-hidden="true">←</span> {t("Back to the Morocco journey")}
-          </Link>
-
-          <header className="blog-archive-heading">
-            <div>
-              <p className="eyebrow">{t("The Morocco travel journal")}</p>
-              <h1>{t("Take the")}<br /><span>{t("scenic route.")}</span></h1>
+      <main className="blog-redesign">
+        <section className="blog-redesign__hero" aria-labelledby="blog-redesign-title">
+          <div className="blog-redesign__hero-inner">
+            <div className="blog-redesign__intro">
+              <p className="blog-redesign__eyebrow"><span>{localeCopy.eyebrow}</span><i aria-hidden="true" /></p>
+              <h1 id="blog-redesign-title">{localeCopy.titleLead}<br /><em>{localeCopy.titleAccent}</em></h1>
+              <p className="blog-redesign__lead">{localeCopy.description}</p>
+              <a className="blog-redesign__button" href="#blog-articles">
+                {localeCopy.explore}<span aria-hidden="true">→</span>
+              </a>
+              <p className="blog-redesign__signature">{localeCopy.signature}</p>
             </div>
-            <p>{t("Notes from the places, people, and moments that make a journey stay with you.")}</p>
-          </header>
-
-          {featuredPost && (
-            <article className="blog-feature">
-              <Link href={`/blog/${featuredPost.slug}`} className="blog-feature__image">
-                <img src={getBlogImageUrl(featuredPost.image, 1800)} alt={featuredPost.imageAlt} fetchPriority="high" />
-                <span className="blog-feature__image-label">{t("The latest story")} <span aria-hidden="true">↗</span></span>
-              </Link>
-              <div className="blog-feature__copy">
-                <p className="eyebrow">{featuredPost.category} · {featuredPost.location}</p>
-                <p className="blog-feature__date">{formatBlogDate(featuredPost.publishedAt, locale)} <span>·</span> {t(featuredPost.readingTime)}</p>
-                <Link href={`/blog/${featuredPost.slug}`} className="blog-feature__title">
-                  <h2>{featuredPost.title}</h2>
-                  <span aria-hidden="true">↗</span>
-                </Link>
-                <p className="blog-feature__excerpt">{featuredPost.excerpt}</p>
-                <Link href={`/blog/${featuredPost.slug}`} className="journal-text-link">
-                  {t("Read the story")} <span aria-hidden="true">→</span>
-                </Link>
+            <div className="blog-redesign__hero-visual" aria-label={localeCopy.heroImageLabel}>
+              <div className="blog-redesign__hero-photo">
+                <Image
+                  src="/Moroccan Coastal Travel Panorama.webp"
+                  alt={localeCopy.heroImageAlt}
+                  fill
+                  sizes="(max-width: 760px) 100vw, 58vw"
+                  preload
+                  className="blog-redesign__hero-image"
+                />
               </div>
-            </article>
-          )}
-
-          <section className="blog-archive" aria-labelledby="blog-archive-title">
-            <div className="blog-archive__heading">
-              <div>
-                <p className="eyebrow">{t("A little inspiration")}</p>
-                <h2 id="blog-archive-title">{t("More from the journal")}</h2>
-              </div>
-              <span>{String(localizedPosts.length).padStart(2, "0")} {t("stories")}</span>
+              <span className="blog-redesign__surf-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="M4 20c4.3 0 4.3-7 8.6-7s4.3 7 8.6 7 4.3-7 8.6-7M4 25c4.3 0 4.3-4 8.6-4s4.3 4 8.6 4 4.3-4 8.6-4M7 12c2-4.1 5.2-6 9.3-6 2.8 0 5.3 1.2 7.3 3.5" /></svg>
+              </span>
+              <svg className="blog-redesign__hero-wave" viewBox="0 0 900 100" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M0 48c132 34 202-22 341-6 139 16 197 38 331 16 89-15 157-12 228 3v39H0Z" fill="#dff6fb" />
+              </svg>
             </div>
-            <div className="journal-grid journal-grid--archive">
-              {otherPosts.map((post, index) => (
-                <article key={post.slug} className="journal-card">
-                  <Link href={`/blog/${post.slug}`} className="journal-card__image">
-                    <img src={getBlogImageUrl(post.image)} alt={post.imageAlt} loading="lazy" />
-                    <span className="journal-card__category">{post.category}</span>
-                    <span className="journal-card__number" aria-hidden="true">{String(index + 2).padStart(2, "0")}</span>
-                  </Link>
-                  <div className="journal-card__body">
-                    <div className="journal-card__meta">
-                      <span>{formatBlogDate(post.publishedAt, locale)}</span>
-                      <span>{t(post.readingTime)}</span>
-                    </div>
-                    <Link href={`/blog/${post.slug}`} className="journal-card__title">
-                      <h3>{post.title}</h3>
-                      <span aria-hidden="true">↗</span>
-                    </Link>
-                    <p>{post.excerpt}</p>
-                    <Link href={`/blog/${post.slug}`} className="journal-card__read">
-                      {t("Read the story")} <span aria-hidden="true">↗</span>
-                    </Link>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <aside className="blog-page__callout">
-            <div>
-              <p className="eyebrow">{t("Your Morocco, your way")}</p>
-              <h2>{t("Make the journey your own.")}</h2>
-              <p>{t("From the first arrival to the last sunset, we’re here to help you find your rhythm.")}</p>
-            </div>
-            <Link href="/#transfer" className="button-signal">{t("Plan your trip")} <span aria-hidden="true">→</span></Link>
-          </aside>
-        </div>
+          </div>
+        </section>
+        <BlogArchiveExperience posts={archivePosts} locale={locale} newsletterImage={archivePosts[0]?.image ?? "/Moroccan Coastal Travel Panorama.webp"} newsletterImageUnoptimized={archivePosts[0]?.imageUnoptimized ?? false} />
       </main>
+      <SiteFooter className="w-[100%] h-full p-24" locale={locale} />
     </>
   );
+}
+
+function getBlogPageCopy(locale: Locale) {
+  return locale === "fr" ? {
+    eyebrow: "NOTRE BLOG",
+    titleLead: "Prenez la",
+    titleAccent: "route panoramique.",
+    description: "Découvrez des conseils, des récits et des guides sur le surf, les voyages et la vie à Taghazout, au Maroc.",
+    explore: "Explorer les articles",
+    signature: "Surfer · Voyager · Explorer",
+    heroImageLabel: "Photographie de la côte atlantique marocaine",
+    heroImageAlt: "La côte atlantique et le village de Taghazout au Maroc",
+  } : {
+    eyebrow: "OUR BLOG",
+    titleLead: "Take the",
+    titleAccent: "Scenic Route",
+    description: "Discover tips, stories and guides about surfing, travel and life in Taghazout, Morocco.",
+    explore: "Explore Our Articles",
+    signature: "Surf · Travel · Explore",
+    heroImageLabel: "Photography of the Moroccan Atlantic coast",
+    heroImageAlt: "The Atlantic coastline and village of Taghazout, Morocco",
+  };
 }
