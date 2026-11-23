@@ -3,29 +3,13 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import type { Locale } from "../i18n";
-
-const copy = {
-  en: {
-    title: "FIND YOUR RHYTHM IN THE ATLANTIC.",
-    subtitle: "Discover the magic of Morocco’s Atlantic coast with Taghazout Ocean. From unforgettable surf holidays and professional surf lessons to exciting outdoor adventures, experience everything the ocean and its surroundings have to offer.",
-    mobileSubtitle: "Surf holidays, professional lessons, and outdoor adventures on Morocco’s Atlantic coast.",
-    explore: "EXPLORE OUR EXPERIENCES",
-    contact: "CONTACT US",
-  },
-  fr: {
-    title: "TROUVEZ VOTRE RYTHME SUR L’ATLANTIQUE.",
-    subtitle: "Découvrez la magie de la côte Atlantique marocaine avec Taghazout Ocean. Des séjours surf inoubliables et cours de surf aux aventures en plein air, vivez tout ce que l’océan et ses environs ont à offrir.",
-    mobileSubtitle: "Séjours surf, cours et aventures en plein air sur la côte Atlantique marocaine.",
-    explore: "EXPLORER NOS EXPÉRIENCES",
-    contact: "NOUS CONTACTER",
-  },
-} as const;
+import type { HeroPresentationSettings } from "../hero-presentation";
 
 type HeroCard = {
-  key: string;
   title: string;
   description: string;
   image: string;
+  href: string;
   icon: "wave" | "lesson" | "mountain";
 };
 
@@ -53,9 +37,8 @@ function HeroCardIcon({ icon }: { icon: HeroCard["icon"] }) {
   );
 }
 
-export default function HeroPresentation({ locale }: { locale: Locale }) {
+export default function HeroPresentation({ locale, settings }: { locale: Locale; settings: HeroPresentationSettings }) {
   const sectionRef = useRef<HTMLElement>(null);
-  const c = copy[locale];
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -74,17 +57,13 @@ export default function HeroPresentation({ locale }: { locale: Locale }) {
     observer.observe(section);
     return () => observer.disconnect();
   }, []);
-  const cards: HeroCard[] = locale === "fr"
-    ? [
-        { key: "Surf Holidays", title: "Séjours surf", description: "Découvrez nos expériences surf : retraites Surf & Yoga, séjours de six jours et coaching dédié.", image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200&q=86", icon: "wave" },
-        { key: "Learn to Surf", title: "Cours de surf", description: "Débutant ou envie de progresser ? Cours en groupe, sessions privées et accompagnement.", image: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=1200&q=86", icon: "lesson" },
-        { key: "Explore & Adventure", title: "Activités & aventures", description: "Balade à dos de chameau, Paradise Valley, quad, cheval et autres expériences outdoor.", image: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=1200&q=86", icon: "mountain" },
-      ]
-    : [
-        { key: "Surf Holidays", title: "Surf holidays", description: "Surf & Yoga retreats, six-day stays in Tamraght, and dedicated surf coaching.", image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200&q=86", icon: "wave" },
-        { key: "Learn to Surf", title: "Surf lessons", description: "Group lessons, private sessions, and guidance for every level in the water.", image: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=1200&q=86", icon: "lesson" },
-        { key: "Explore & Adventure", title: "Activities & adventures", description: "Camel rides, Paradise Valley, quad biking, horse riding, and more.", image: "https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=1200&q=86", icon: "mountain" },
-      ];
+  const cards: HeroCard[] = settings.cards.map((card) => ({
+    title: card.title[locale],
+    description: card.description[locale],
+    image: card.image,
+    icon: card.icon,
+    href: card.href,
+  }));
 
   return (
     <section id="ocean-experience" ref={sectionRef} className="hero-presentation">
@@ -92,25 +71,25 @@ export default function HeroPresentation({ locale }: { locale: Locale }) {
       <div className="hero-presentation__overlay" aria-hidden="true" />
       <div className="hero-presentation__content">
         <div className="hero-presentation__copy" data-reveal>
-          <p className="hero-presentation__kicker">TAGHAZOUT OCEAN <span>30°43′ N · 9°42′ W</span></p>
-          <h1>{c.title}</h1>
+          <p className="hero-presentation__kicker">{settings.kicker[locale]} <span>{settings.coordinates}</span></p>
+          <h1>{settings.title[locale]}</h1>
           <p className="hero-presentation__subtitle">
-            <span className="hero-presentation__subtitle-full">{c.subtitle}</span>
-            <span className="hero-presentation__subtitle-mobile">{c.mobileSubtitle}</span>
+            <span className="hero-presentation__subtitle-full">{settings.subtitle[locale]}</span>
+            <span className="hero-presentation__subtitle-mobile">{settings.mobileSubtitle[locale]}</span>
           </p>
           <div className="hero-presentation__actions">
-            <Link href="#world" className="hero-presentation__button hero-presentation__button--primary">{c.explore}<span>↘</span></Link>
-            <Link href="#contact" className="hero-presentation__button">{c.contact}<span>↗</span></Link>
+            <Link href={settings.primaryAction.href} className="hero-presentation__button hero-presentation__button--primary">{settings.primaryAction.label[locale]}<span>↘</span></Link>
+            <Link href={settings.secondaryAction.href} className="hero-presentation__button">{settings.secondaryAction.label[locale]}<span>↗</span></Link>
           </div>
         </div>
 
         <div className="hero-presentation__cards" data-stagger>
           {cards.map((card, index) => (
             <Link
-              href={index === 0 ? "#surf-packages" : index === 1 ? "#surf-lessons" : "#activities-adventures"}
+              href={card.href}
               className="hero-presentation__card"
               data-card
-              key={card.key}
+              key={card.href}
             >
               <img src={card.image} alt="" loading={index === 0 ? "eager" : "lazy"} />
               <span className="hero-presentation__card-content">

@@ -1,105 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Nav from "./Nav";
 import SiteFooter from "./SiteFooter";
 import { useLocale } from "./LocaleProvider";
-
-const packages = {
-  en: [
-    {
-      title: "Surf & Yoga Retreat",
-      days: "7 Days",
-      description: "Surf, relax and recharge in paradise.",
-      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1000&q=85",
-      alt: "A quiet yoga practice by the Atlantic at sunset",
-      includes: ["Surf sessions", "Yoga sessions", "Accommodation", "Breakfast"],
-      capacity: "Up to 12 People",
-      price: "€499",
-      popular: false,
-    },
-    {
-      title: "Six-Day Surf Package",
-      days: "6 Days",
-      description: "Improve your surfing skills with six days of surf experiences.",
-      image: "https://images.unsplash.com/photo-1455729552865-3658a5d39692?auto=format&fit=crop&w=1000&q=85",
-      alt: "A surfer riding an Atlantic wave",
-      includes: ["Six-day surf experience", "Professional surf coaching", "Equipment", "Accommodation"],
-      capacity: "Up to 14 People",
-      price: "€699",
-      popular: true,
-    },
-    {
-      title: "Surf Coaching Package",
-      days: "7 Days",
-      description: "Take your surfing to the next level with personalized coaching.",
-      image: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=1000&q=85",
-      alt: "Surfers carrying their boards to the water",
-      includes: ["Personalized coaching", "Surf equipment", "Video analysis", "Skill development"],
-      capacity: "Up to 10 People",
-      price: "€899",
-      popular: false,
-    },
-    {
-      title: "Custom Surf Escape",
-      days: "Flexible",
-      description: "A tailored stay shaped around your dates, goals and pace.",
-      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=85",
-      alt: "Open Atlantic coastline and waves in Morocco",
-      includes: ["Surf sessions", "Local surf guidance", "Flexible coaching", "Stay options"],
-      capacity: "Flexible group sizes",
-      price: "On request",
-      popular: false,
-    },
-  ],
-  fr: [
-    {
-      title: "Retraite Surf & Yoga",
-      days: "7 jours",
-      description: "Surfez, détendez-vous et ressourcez-vous au bord de l’océan.",
-      image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1000&q=85",
-      alt: "Une séance de yoga paisible au bord de l’Atlantique au coucher du soleil",
-      includes: ["Sessions de surf", "Séances de yoga", "Hébergement", "Petit-déjeuner"],
-      capacity: "Jusqu’à 12 personnes",
-      price: "499 €",
-      popular: false,
-    },
-    {
-      title: "Séjour Surf de Six Jours",
-      days: "6 jours",
-      description: "Progressez avec six jours d’expériences de surf.",
-      image: "https://images.unsplash.com/photo-1455729552865-3658a5d39692?auto=format&fit=crop&w=1000&q=85",
-      alt: "Un surfeur sur une vague de l’Atlantique",
-      includes: ["Six jours de surf", "Coaching professionnel", "Équipement", "Hébergement"],
-      capacity: "Jusqu’à 14 personnes",
-      price: "699 €",
-      popular: true,
-    },
-    {
-      title: "Formule Coaching Surf",
-      days: "7 jours",
-      description: "Passez au niveau supérieur avec un coaching personnalisé.",
-      image: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=1000&q=85",
-      alt: "Des surfeurs qui portent leurs planches vers l’océan",
-      includes: ["Coaching personnalisé", "Matériel de surf", "Analyse vidéo", "Progression technique"],
-      capacity: "Jusqu’à 10 personnes",
-      price: "899 €",
-      popular: false,
-    },
-    {
-      title: "Séjour Surf Sur Mesure",
-      days: "Flexible",
-      description: "Un séjour adapté à vos dates, vos objectifs et votre rythme.",
-      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=85",
-      alt: "Côte atlantique et vagues au Maroc",
-      includes: ["Sessions de surf", "Conseils de surf locaux", "Coaching flexible", "Options d’hébergement"],
-      capacity: "Groupes flexibles",
-      price: "Sur demande",
-      popular: false,
-    },
-  ],
-} as const;
+import SurfPackageReservationDialog from "./SurfPackageReservationDialog";
+import type { SurfPackage } from "../surf-packages";
 
 const serviceItems = [
   { icon: "people", en: ["PROFESSIONAL SURF INSTRUCTORS", "Learn from experienced instructors."], fr: ["MONITEURS DE SURF", "Apprenez avec des moniteurs expérimentés."] },
@@ -126,10 +33,20 @@ function RoundIcon({ kind }: { kind: string }) {
   );
 }
 
-export default function SurfPackagesPage() {
+function formatPackagePrice(value: number, locale: string) {
+  return new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-IE", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+export default function SurfPackagesPage({ packages }: { packages: SurfPackage[] }) {
   const { locale } = useLocale();
   const french = locale === "fr";
   const pageRef = useRef<HTMLDivElement>(null);
+  const [selectedPackage, setSelectedPackage] = useState<SurfPackage | null>(null);
+  const publishedPackages = packages.filter((item) => item.published);
 
   useEffect(() => {
     const root = pageRef.current;
@@ -189,24 +106,30 @@ export default function SurfPackagesPage() {
             </div>
 
             <div className="surf-package-grid" id="package-cards">
-              {packages[locale].map((item) => (
-                <article className={`surf-offer-card${item.popular ? " surf-offer-card--featured" : ""}`} data-reveal key={item.title}>
+              {publishedPackages.map((item) => (
+                <article id={`package-${item.id}`} className={`surf-offer-card${item.popular ? " surf-offer-card--featured" : ""}`} data-reveal key={item.id}>
                   <div className="surf-offer-card__image">
-                    <img src={item.image} alt={item.alt} loading="lazy" />
-                    <span className="surf-offer-card__days"><span aria-hidden="true">◷</span>{item.days}</span>
+                    <img src={item.image} alt={item.imageAlt[locale]} loading="lazy" />
+                    <span className="surf-offer-card__days"><span aria-hidden="true">◷</span>{item.duration[locale]}</span>
                     {item.popular && <span className="surf-offer-card__popular"><span aria-hidden="true">★</span>{french ? "LE PLUS POPULAIRE" : "MOST POPULAR"}</span>}
                   </div>
                   <div className="surf-offer-card__body">
-                    <h3>{item.title}</h3>
-                    <p className="surf-offer-card__description">{item.description}</p>
-                    <ul>{item.includes.map((feature) => <li key={feature}><span aria-hidden="true">✓</span>{feature}</li>)}</ul>
-                    <div className="surf-offer-card__capacity"><RoundIcon kind="people" /><span>{item.capacity}</span></div>
-                    <div className={`surf-offer-card__price${item.price === "On request" || item.price === "Sur demande" ? " surf-offer-card__price--quote" : ""}`}>
-                      <span>{item.price === "On request" || item.price === "Sur demande" ? (french ? "Tarif" : "Price") : (french ? "À partir de" : "From")}</span>
-                      <strong>{item.price}</strong>
-                      {item.price !== "On request" && item.price !== "Sur demande" && <span>{french ? "/ personne" : "/ person"}</span>}
+                    <h3>{item.title[locale]}</h3>
+                    <p className="surf-offer-card__description">{item.description[locale]}</p>
+                    <ul>{item.activities.map((activity, index) => <li key={`${item.id}-activity-${index}`}><span aria-hidden="true">✓</span>{activity[locale]}</li>)}</ul>
+                    <div className="surf-offer-card__capacity"><RoundIcon kind="people" /><span>{french ? "Prix par personne" : "Price per person"}</span></div>
+                    <div className={`surf-offer-card__price${item.pricePerPerson === null ? " surf-offer-card__price--quote" : ""}`}>
+                      <span>{french ? "Tarif" : "Price"}</span>
+                      <strong>{item.pricePerPerson === null ? (french ? "Prix à définir" : "Price to be set") : formatPackagePrice(item.pricePerPerson, locale)}</strong>
+                      {item.pricePerPerson !== null && <span>{french ? "/ personne" : "/ person"}</span>}
                     </div>
-                    <Link className="surf-button surf-button--deep" href="/#contact">{item.price === "On request" || item.price === "Sur demande" ? (french ? "PERSONNALISER LE SÉJOUR" : "Plan Your Stay") : (french ? "CHOISIR CE SÉJOUR" : "Choose Package")}<span aria-hidden="true">→</span></Link>
+                    {item.pricePerPerson === null ? (
+                      <button className="surf-button surf-button--deep surf-package-booking-disabled" type="button" disabled>{french ? "TARIF À DÉFINIR" : "PRICE TO BE SET"}</button>
+                    ) : item.startTimes.length === 0 ? (
+                      <button className="surf-button surf-button--deep surf-package-booking-disabled" type="button" disabled>{french ? "RÉSERVATIONS BIENTÔT OUVERTES" : "RESERVATIONS OPENING SOON"}</button>
+                    ) : (
+                      <button className="surf-button surf-button--deep" type="button" onClick={() => setSelectedPackage(item)}>{french ? "CHOISIR CE SÉJOUR" : "Choose Package"}<span aria-hidden="true">→</span></button>
+                    )}
                   </div>
                 </article>
               ))}
@@ -232,6 +155,7 @@ export default function SurfPackagesPage() {
           </div>
         </section>
       </main>
+      {selectedPackage && <SurfPackageReservationDialog packageItem={selectedPackage} locale={locale} onClose={() => setSelectedPackage(null)} />}
       <SiteFooter locale={locale} />
     </div>
   );

@@ -385,13 +385,14 @@
   flex: 1;
   flex-direction: column;
   align-items: stretch;
-  padding: 1.15rem 1.2rem 1.15rem;
+  padding: 1.7rem 1.2rem 1.15rem;
 }
 
 .surf-offer-card h3 {
   font-family: var(--font-display);
   font-size: clamp(1.3rem, 1.65vw, 1.85rem);
   font-weight: 900;
+  text-align: center;
   line-height: 0.98;
 }
 
@@ -846,7 +847,7 @@
   }
 
   .surf-offer-card__body {
-    padding: 1rem;
+    padding: 1.7rem;
   }
 
   .surf-offer-card h3 {
@@ -1005,5 +1006,209 @@
   .surf-button,
   .surf-offer-card {
     transition: none;
+  }
+}
+
+.surf-package-booking-disabled,
+.surf-package-booking-disabled:hover {
+  cursor: not-allowed;
+  opacity: 0.72;
+  transform: none;
+}
+
+.surf-package-booking-backdrop {
+  position: fixed;
+  z-index: 600;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  overflow: auto;
+  background: rgb(3 35 48 / 72%);
+  padding: 1rem;
+  backdrop-filter: blur(5px);
+}
+
+.surf-package-booking {
+  width: min(100%, 42rem);
+  max-height: min(90dvh, 52rem);
+  overflow: auto;
+  border: 1px solid #b9dce4;
+  border-radius: 0.65rem;
+  background: #fff;
+  padding: clamp(1rem, 3vw, 1.8rem);
+  color: #06415a;
+  box-shadow: 0 1.5rem 4rem rgb(0 26 37 / 32%);
+}
+
+.surf-package-booking__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid #dcecef;
+  padding-bottom: 0.9rem;
+}
+
+.surf-package-booking__header h2 {
+  margin-top: 0.35rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.surf-package-booking__header>button {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #edf7f8;
+  color: #075878;
+  cursor: pointer;
+  font-size: 1.3rem;
+}
+
+.surf-package-booking__form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.surf-package-booking__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 0.8rem;
+}
+
+.surf-package-booking__grid label {
+  display: grid;
+  gap: 0.35rem;
+  color: #315564;
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.surf-package-booking__field-error {
+  color: #a6332b;
+  font-size: 0.66rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.surf-package-booking__grid input,
+.surf-package-booking__grid select,
+.surf-package-booking__grid textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #b9d5db;
+  border-radius: 0.25rem;
+  background: #fbfefe;
+  padding: 0.65rem 0.7rem;
+  color: #123b4c;
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.surf-package-booking__grid input[aria-invalid="true"] {
+  border-color: #b33a32;
+  background: #fffaf9;
+}
+
+.surf-package-booking__grid textarea {
+  resize: vertical;
+}
+
+.surf-package-booking__notes {
+  grid-column: 1 / -1;
+}
+
+.surf-package-booking__total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-block: 1px solid #dcecef;
+  padding: 0.8rem 0;
+  color: #41606a;
+  font-size: 0.75rem;
+}
+
+.surf-package-booking__total strong {
+  display: grid;
+  gap: 0.15rem;
+  color: #075878;
+  font-size: 1.1rem;
+  text-align: right;
+}
+
+.surf-package-booking__total small {
+  color: #66818a;
+  font-size: 0.62rem;
+}
+
+.surf-package-booking__error {
+  border-left: 3px solid #b33a32;
+  background: #fff2f0;
+  padding: 0.6rem 0.75rem;
+  color: #8c2822;
+  font-size: 0.75rem;
+}
+
+.surf-package-booking__form>.surf-button {
+  justify-self: end;
+  cursor: pointer;
+}
+
+.surf-package-booking__form>.surf-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.surf-package-booking__success {
+  display: grid;
+  justify-items: center;
+  gap: 0.8rem;
+  padding: 1.6rem 0 0.3rem;
+  color: #315564;
+  text-align: center;
+}
+
+.surf-package-booking__success>span {
+  display: grid;
+  width: 3rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  background: #e5f4eb;
+  color: #26734d;
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.surf-package-booking__success>strong {
+  color: #075878;
+  font-size: 1.2rem;
+}
+
+.surf-package-booking__success>.surf-button {
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .surf-package-booking-backdrop {
+    align-items: end;
+    padding: 0;
+  }
+
+  .surf-package-booking {
+    width: 100%;
+    max-height: 92dvh;
+    border-radius: 0.7rem 0.7rem 0 0;
+  }
+
+  .surf-package-booking__form>.surf-button {
+    width: 100%;
   }
 }

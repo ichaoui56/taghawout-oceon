@@ -6,6 +6,13 @@ import { getActivityReservationById, getActivityReservationCount, getActivityRes
 import { getManagedBlogCatalog, getManagedBlogCount } from "../server/blog-catalog";
 import { getSiteSeoSettings } from "../server/site-seo";
 import { getConciergeSettings } from "../server/concierge";
+import { getHeroPresentationSettings } from "../server/hero-presentation";
+import { getSurfPackageReservationCount, getSurfPackageReservations, getSurfPackages } from "../server/surf-package-catalog";
+import type { SurfPackage } from "../surf-packages";
+import { getSurfLessonReservationCount, getSurfLessonReservations, getSurfLessons } from "../server/surf-lesson-catalog";
+import type { SurfLesson } from "../surf-lessons";
+import { getManagedCustomers } from "../server/customer-directory";
+import type { ManagedCustomer } from "../server/customer-directory";
 import { getManagedGoogleReviewCount, getManagedGoogleReviews } from "../server/google-reviews";
 import TransferDashboard from "./TransferDashboard";
 
@@ -22,7 +29,15 @@ export type DashboardPage =
   | "reviews"
   | "settings"
   | "seo"
-  | "concierge";
+  | "concierge"
+  | "presentation"
+  | "surf-packages"
+  | "surf-package-detail"
+  | "surf-package-reservations"
+  | "surf-lessons"
+  | "surf-lesson-detail"
+  | "surf-lesson-reservations"
+  | "customers";
 
 export default async function TransferDashboardWrapper({
   page,
@@ -35,7 +50,7 @@ export default async function TransferDashboardWrapper({
   const result = await getTransferDashboardData();
   if (!result.authorized) redirect("/dashboard/loginP");
   if (
-    (page === "transfers" || page === "activities" || page === "activity-detail" || page === "activity-reservations" || page === "activity-reservation-detail" || page === "blogs" || page === "reviews" || page === "seo" || page === "concierge") &&
+    (page === "transfers" || page === "activities" || page === "activity-detail" || page === "activity-reservations" || page === "activity-reservation-detail" || page === "blogs" || page === "reviews" || page === "seo" || page === "concierge" || page === "presentation" || page === "surf-packages" || page === "surf-package-detail" || page === "surf-package-reservations" || page === "surf-lessons" || page === "surf-lesson-detail" || page === "surf-lesson-reservations" || page === "customers") &&
     result.user.role !== "ADMIN"
   ) {
     redirect("/dashboard/requests");
@@ -81,6 +96,66 @@ export default async function TransferDashboardWrapper({
     : 0;
   const siteSeoSettings = page === "seo" ? await getSiteSeoSettings() : null;
   const conciergeSettings = page === "concierge" ? await getConciergeSettings() : null;
+  const heroPresentationSettings = page === "presentation" ? await getHeroPresentationSettings() : null;
+  const surfPackages = page === "surf-packages" || page === "surf-package-detail" ? await getSurfPackages() : [];
+  const isNewSurfPackage = page === "surf-package-detail" && detailId === "new";
+  const surfPackageDetail: SurfPackage | null = page !== "surf-package-detail"
+    ? null
+    : isNewSurfPackage
+      ? {
+          id: `surf-package-${crypto.randomUUID().slice(0, 8)}`,
+          title: { en: "New surf package", fr: "Nouvelle formule surf" },
+          duration: { en: "", fr: "" },
+          description: { en: "", fr: "" },
+          image: "",
+          imageAlt: { en: "", fr: "" },
+          activities: [{ en: "", fr: "" }],
+          pricePerPerson: null,
+          startTimes: [],
+          popular: false,
+          showOnHomepage: false,
+          published: false,
+        }
+      : surfPackages.find((item) => item.id === detailId) ?? null;
+  if (page === "surf-package-detail" && !surfPackageDetail) notFound();
+  const shouldLoadSurfPackageReservations = result.user.role === "ADMIN" && page === "surf-package-reservations";
+  const surfPackageReservations = shouldLoadSurfPackageReservations ? await getSurfPackageReservations() : [];
+  const surfPackageReservationCount = result.user.role === "ADMIN"
+    ? shouldLoadSurfPackageReservations
+      ? surfPackageReservations.length
+      : await getSurfPackageReservationCount()
+    : 0;
+  const surfLessons = page === "surf-lessons" || page === "surf-lesson-detail" ? await getSurfLessons() : [];
+  const isNewSurfLesson = page === "surf-lesson-detail" && detailId === "new";
+  const surfLessonDetail: SurfLesson | null = page !== "surf-lesson-detail"
+    ? null
+    : isNewSurfLesson
+      ? {
+          id: `surf-lesson-${crypto.randomUUID().slice(0, 8)}`,
+          title: { en: "New surf lesson", fr: "Nouveau cours de surf" },
+          duration: { en: "", fr: "" },
+          description: { en: "", fr: "" },
+          image: "",
+          imageAlt: { en: "", fr: "" },
+          activities: [{ en: "", fr: "" }],
+          pricePerPerson: null,
+          startTimes: [],
+          popular: false,
+          showOnHomepage: false,
+          published: false,
+        }
+      : surfLessons.find((item) => item.id === detailId) ?? null;
+  if (page === "surf-lesson-detail" && !surfLessonDetail) notFound();
+  const shouldLoadSurfLessonReservations = result.user.role === "ADMIN" && page === "surf-lesson-reservations";
+  const surfLessonReservations = shouldLoadSurfLessonReservations ? await getSurfLessonReservations() : [];
+  const surfLessonReservationCount = result.user.role === "ADMIN"
+    ? shouldLoadSurfLessonReservations
+      ? surfLessonReservations.length
+      : await getSurfLessonReservationCount()
+    : 0;
+  const customers: ManagedCustomer[] = result.user.role === "ADMIN" && page === "customers"
+    ? await getManagedCustomers()
+    : [];
   return (
     <TransferDashboard
       user={result.user}
@@ -98,6 +173,18 @@ export default async function TransferDashboardWrapper({
       managedBlogCount={managedBlogCount}
       siteSeoSettings={siteSeoSettings}
       conciergeSettings={conciergeSettings}
+      heroPresentationSettings={heroPresentationSettings}
+      surfPackages={surfPackages}
+      surfPackageDetail={surfPackageDetail}
+      isNewSurfPackage={isNewSurfPackage}
+      surfPackageReservations={surfPackageReservations}
+      surfPackageReservationCount={surfPackageReservationCount}
+      surfLessons={surfLessons}
+      surfLessonDetail={surfLessonDetail}
+      isNewSurfLesson={isNewSurfLesson}
+      surfLessonReservations={surfLessonReservations}
+      surfLessonReservationCount={surfLessonReservationCount}
+      customers={customers}
       transferRequestDetail={transferRequestDetail}
       activityReservationDetail={activityReservationDetail}
     />

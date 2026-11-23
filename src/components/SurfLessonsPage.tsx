@@ -1,62 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Nav from "./Nav";
 import SiteFooter from "./SiteFooter";
 import { useLocale } from "./LocaleProvider";
-
-const lessons = [
-  {
-    number: "01",
-    level: { en: "START HERE", fr: "PREMIÈRES VAGUES" },
-    title: { en: "Beginner Lesson", fr: "Cours Débutant" },
-    duration: { en: "1 Day", fr: "1 jour" },
-    description: { en: "Get started with confidence in the waves.", fr: "Prenez confiance et lancez-vous dans les vagues." },
-    image: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=900&q=88",
-    alt: { en: "Surfer carrying a board beside the Atlantic", fr: "Surfeur portant une planche au bord de l’Atlantique" },
-    includes: { en: ["Surf theory & practice", "Safety instructions", "Equipment included", "Beach support"], fr: ["Théorie et pratique", "Consignes de sécurité", "Équipement inclus", "Accompagnement sur la plage"] },
-    capacity: { en: "Up to 8 People", fr: "Jusqu’à 8 personnes" },
-    price: "€49",
-  },
-  {
-    number: "02",
-    level: { en: "BUILD YOUR FLOW", fr: "GAGNEZ EN AISANCE" },
-    title: { en: "Surf Progression", fr: "Progression Surf" },
-    duration: { en: "3 Days", fr: "3 jours" },
-    description: { en: "Improve your skills with structured lessons.", fr: "Progressez grâce à des cours structurés." },
-    image: "https://images.unsplash.com/photo-1455729552865-3658a5d39692?auto=format&fit=crop&w=900&q=88",
-    alt: { en: "Surfer practicing on an Atlantic wave", fr: "Surfeur en entraînement sur une vague de l’Atlantique" },
-    includes: { en: ["Advanced techniques", "Video analysis", "Equipment included", "Personalized coaching"], fr: ["Techniques avancées", "Analyse vidéo", "Équipement inclus", "Coaching personnalisé"] },
-    capacity: { en: "Up to 10 People", fr: "Jusqu’à 10 personnes" },
-    price: "€129",
-    popular: true,
-  },
-  {
-    number: "03",
-    level: { en: "FIND YOUR PACE", fr: "TROUVEZ VOTRE RYTHME" },
-    title: { en: "Surf Intensive", fr: "Surf Intensif" },
-    duration: { en: "5 Days", fr: "5 jours" },
-    description: { en: "Accelerate your progress with intensive training.", fr: "Accélérez vos progrès avec un entraînement intensif." },
-    image: "https://images.unsplash.com/photo-1502933691298-84fc14542831?auto=format&fit=crop&w=900&q=88",
-    alt: { en: "Surfer training in clear ocean water", fr: "Surfeur en entraînement dans une eau limpide" },
-    includes: { en: ["Daily surf lessons", "Personalized coaching", "Video analysis", "Equipment included"], fr: ["Cours de surf quotidiens", "Coaching personnalisé", "Analyse vidéo", "Équipement inclus"] },
-    capacity: { en: "Up to 12 People", fr: "Jusqu’à 12 personnes" },
-    price: "€199",
-  },
-  {
-    number: "04",
-    level: { en: "ONE-TO-ONE", fr: "COURS PRIVÉ" },
-    title: { en: "Private Coaching", fr: "Coaching Privé" },
-    duration: { en: "Private", fr: "Privé" },
-    description: { en: "One-to-one coaching for faster progress.", fr: "Un coaching individuel pour progresser plus vite." },
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=88",
-    alt: { en: "A quiet Atlantic beach in Morocco", fr: "Une plage paisible de l’Atlantique au Maroc" },
-    includes: { en: ["Personalized lessons", "Focus on your goals", "Video analysis", "Premium equipment"], fr: ["Cours personnalisés", "Vos objectifs au centre", "Analyse vidéo", "Équipement premium"] },
-    capacity: { en: "1 Person", fr: "1 personne" },
-    price: "€149",
-  },
-] as const;
+import SurfLessonReservationDialog from "./SurfLessonReservationDialog";
+import type { SurfLesson } from "../surf-lessons";
 
 const benefits = [
   { icon: "coach", title: { en: "EXPERIENCED INSTRUCTORS", fr: "MONITEURS EXPÉRIMENTÉS" }, copy: { en: "Learn from the best.", fr: "Apprenez avec les meilleurs." } },
@@ -80,10 +30,11 @@ function LessonIcon({ kind }: { kind: string }) {
   );
 }
 
-export default function SurfLessonsPage() {
+export default function SurfLessonsPage({ lessons }: { lessons: SurfLesson[] }) {
   const { locale } = useLocale();
   const french = locale === "fr";
   const pageRef = useRef<HTMLDivElement>(null);
+  const [selectedLesson, setSelectedLesson] = useState<SurfLesson | null>(null);
 
   useEffect(() => {
     const root = pageRef.current;
@@ -142,22 +93,25 @@ export default function SurfLessonsPage() {
             </div>
 
             <div className="lesson-plan-grid" id="lesson-plans">
-              {lessons.map((lesson) => (
-                <article className={`lesson-offer-card${"popular" in lesson && lesson.popular ? " lesson-offer-card--featured" : ""}`} data-reveal key={lesson.number}>
+              {lessons.map((lesson, index) => (
+                <article id={`lesson-${lesson.id}`} className={`lesson-offer-card${lesson.popular ? " lesson-offer-card--featured" : ""}`} data-reveal key={lesson.id}>
                   <div className="lesson-offer-card__image">
-                    <img src={lesson.image} alt={lesson.alt[locale]} loading={lesson.number === "01" ? "eager" : "lazy"} />
+                    <img src={lesson.image} alt={lesson.imageAlt[locale]} loading={index === 0 ? "eager" : "lazy"} />
                     <span className="lesson-offer-card__duration"><span aria-hidden="true">◷</span>{lesson.duration[locale]}</span>
-                    <span className="lesson-offer-card__image-number">{lesson.number}</span>
+                    <span className="lesson-offer-card__image-number">{String(index + 1).padStart(2, "0")}</span>
                   </div>
-                  {"popular" in lesson && lesson.popular && <span className="lesson-offer-card__popular"><span aria-hidden="true">★</span>{french ? "LE PLUS POPULAIRE" : "MOST POPULAR"}</span>}
+                  {lesson.popular && <span className="lesson-offer-card__popular"><span aria-hidden="true">★</span>{french ? "LE PLUS POPULAIRE" : "MOST POPULAR"}</span>}
                   <div className="lesson-offer-card__body">
-                    <p className="lesson-offer-card__level">{lesson.number}<span />{lesson.level[locale]}</p>
                     <h3>{lesson.title[locale]}</h3>
                     <p className="lesson-offer-card__description">{lesson.description[locale]}</p>
-                    <ul>{lesson.includes[locale].map((feature) => <li key={feature}><span aria-hidden="true">✓</span>{feature}</li>)}</ul>
-                    <div className="lesson-offer-card__capacity"><LessonIcon kind="group" /><span>{lesson.capacity[locale]}</span></div>
-                    <div className="lesson-offer-card__price"><span>{french ? "À partir de" : "From"}</span><strong>{lesson.price}</strong><span>{french ? "/ personne" : "/ person"}</span></div>
-                    <Link className="lessons-button lesson-offer-card__button" href="/#contact">{french ? "CHOISIR CE COURS" : "Choose Lesson"}<span aria-hidden="true">→</span></Link>
+                    <ul>{lesson.activities.map((activity, activityIndex) => <li key={`${lesson.id}-activity-${activityIndex}`}><span aria-hidden="true">✓</span>{activity[locale]}</li>)}</ul>
+                    <div className="lesson-offer-card__capacity"><LessonIcon kind="group" /><span>{french ? "Prix par personne" : "Price per person"}</span></div>
+                    <div className="lesson-offer-card__price"><span>{french ? "Tarif" : "Price"}</span><strong>{lesson.pricePerPerson === null ? (french ? "Prix à définir" : "Price to be set") : new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-IE", { style: "currency", currency: "EUR", maximumFractionDigits: 2 }).format(lesson.pricePerPerson)}</strong><span>{french ? "/ personne" : "/ person"}</span></div>
+                    {lesson.pricePerPerson === null || lesson.startTimes.length === 0 ? (
+                      <button className="lessons-button lesson-offer-card__button" type="button" disabled>{french ? "RÉSERVATIONS BIENTÔT OUVERTES" : "RESERVATIONS OPENING SOON"}</button>
+                    ) : (
+                      <button className="lessons-button lesson-offer-card__button" type="button" onClick={() => setSelectedLesson(lesson)}>{french ? "CHOISIR CE COURS" : "Choose Lesson"}<span aria-hidden="true">→</span></button>
+                    )}
                   </div>
                 </article>
               ))}
@@ -186,6 +140,7 @@ export default function SurfLessonsPage() {
           </div>
         </section>
       </main>
+      {selectedLesson && <SurfLessonReservationDialog lessonItem={selectedLesson} locale={locale} onClose={() => setSelectedLesson(null)} />}
       <SiteFooter locale={locale} />
     </div>
   );

@@ -33,6 +33,20 @@ enum ActivityReservationStatus {
   CANCELLED
 }
 
+enum SurfPackageReservationStatus {
+  NEW
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum SurfLessonReservationStatus {
+  NEW
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
 enum UserRole {
   ADMIN
   STAFF
@@ -180,6 +194,68 @@ model ConciergeSetting {
   id        String   @id @default("homepage")
   data      Json
   updatedAt DateTime @updatedAt
+}
+
+model HeroPresentationSetting {
+  id        String   @id @default("homepage")
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
+model SurfPackageCatalogSetting {
+  id        String   @id @default("catalog")
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
+model SurfPackageReservation {
+  id               String                       @id @default(cuid())
+  status           SurfPackageReservationStatus @default(NEW)
+  packageId        String
+  packageTitle     String
+  customerName     String
+  customerPhone    String
+  customerEmail    String?
+  notes            String?
+  bookingDate      DateTime                     @db.Date
+  bookingTime      String
+  guests           Int
+  pricePerPerson   Float
+  estimatedTotal   Float
+  currency         String                       @default("EUR")
+  createdAt        DateTime                     @default(now())
+  updatedAt        DateTime                     @updatedAt
+
+  @@index([status, createdAt])
+  @@index([bookingDate, bookingTime])
+}
+
+model SurfLessonCatalogSetting {
+  id        String   @id @default("catalog")
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
+model SurfLessonReservation {
+  id               String                     @id @default(cuid())
+  status           SurfLessonReservationStatus @default(NEW)
+  lessonId         String
+  lessonTitle      String
+  customerName     String
+  customerPhone    String
+  customerEmail    String?
+  notes            String?
+  bookingDate      DateTime                   @db.Date
+  bookingTime      String
+  guests           Int
+  pricePerPerson   Float
+  estimatedTotal   Float
+  currency         String                     @default("EUR")
+  createdAt        DateTime                   @default(now())
+  updatedAt        DateTime                   @updatedAt
+
+  @@index([status, createdAt])
+  @@index([bookingDate, bookingTime])
 }
 
 model ActivityReservation {

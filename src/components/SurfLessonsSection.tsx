@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { Activity } from "../activities";
 import type { Locale } from "../i18n";
+import type { SurfLesson } from "../surf-lessons";
 
 const copy = {
   en: {
@@ -29,28 +29,22 @@ const copy = {
   },
 } as const;
 
-export default function SurfLessonsSection({ activities, locale }: { activities: Activity[]; locale: Locale }) {
+export default function SurfLessonsSection({ lessons, locale }: { lessons: SurfLesson[]; locale: Locale }) {
   const text = copy[locale];
-  const privateLesson = activities.find((activity) => activity.slug === "surfing");
-  const lessons = [
-    { number: "01", title: text.groupTitle, description: text.groupDescription, image: "https://images.unsplash.com/photo-1455729552865-3658a5d39692?auto=format&fit=crop&w=1000&q=88", href: "/activities" },
-    { number: "02", title: text.privateTitle, description: privateLesson?.summary ?? text.privateFallback, image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=88", href: privateLesson ? `/activities/${privateLesson.slug}` : "/activities" },
-    { number: "03", title: text.guidanceTitle, description: text.guidanceDescription, image: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1000&q=88", href: "/activities" },
-  ];
 
   return (
     <section id="surf-lessons" className="service-section surf-lessons" aria-labelledby="surf-lessons-title">
       <div className="service-section__inner">
         <div className="surf-lessons__layout">
           <div className="surf-lessons__options" data-stagger>
-            {lessons.map((lesson) => (
-              <Link href={lesson.href} className="surf-lesson-option" key={lesson.number} data-card>
-                <img src={lesson.image} alt="" loading={lesson.number === "01" ? "eager" : "lazy"} />
+            {lessons.map((lesson, index) => (
+              <Link href={`/surf-lessons#lesson-${lesson.id}`} className="surf-lesson-option" key={lesson.id} data-card>
+                <img src={lesson.image} alt="" loading={index === 0 ? "eager" : "lazy"} />
                 <span className="surf-lesson-option__shade" />
-                <span className="surf-lesson-option__number">{lesson.number}</span>
+                <span className="surf-lesson-option__number">{String(index + 1).padStart(2, "0")}</span>
                 <span className="surf-lesson-option__copy">
-                  <strong>{lesson.title}</strong>
-                  <span>{lesson.description}</span>
+                  <strong>{lesson.title[locale]}</strong>
+                  <span>{lesson.description[locale]}</span>
                 </span>
                 <span className="surf-lesson-option__arrow" aria-hidden="true">↗</span>
               </Link>
@@ -61,7 +55,7 @@ export default function SurfLessonsSection({ activities, locale }: { activities:
             <p className="service-section__eyebrow">{text.eyebrow}</p>
             <h2 id="surf-lessons-title">{text.heading}</h2>
             <p>{text.description}</p>
-            <Link href="/activities" className="service-section__button surf-lessons__button">
+            <Link href="/surf-lessons" className="service-section__button surf-lessons__button">
               {text.viewAll} <span aria-hidden="true">→</span>
             </Link>
           </header>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SurfLessonsPage from "../../src/components/SurfLessonsPage";
+import { getSurfLessons } from "../../src/server/surf-lesson-catalog";
 import "./surf-lessons.css";
 
 export const metadata: Metadata = {
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/surf-lessons" },
 };
 
-export default function Page() {
-  return <SurfLessonsPage />;
+export default async function Page() {
+  const lessons = await getSurfLessons();
+  return <SurfLessonsPage lessons={lessons.filter((lesson) => lesson.published)} />;
 }

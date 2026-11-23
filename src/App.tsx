@@ -18,8 +18,11 @@ import type { GoogleReviewsData } from "./server/google-reviews";
 import ExperienceGallery from "./components/ExperienceGallery";
 import HeroPresentation from "./components/HeroPresentation";
 import AboutOceanSection from "./components/AboutOceanSection";
+import type { HeroPresentationSettings } from "./hero-presentation";
+import type { SurfPackage } from "./surf-packages";
+import type { SurfLesson } from "./surf-lessons";
 
-export default function App({ activities, posts, locale, reviews }: { activities: Activity[]; posts: BlogPost[]; locale: Locale; reviews: GoogleReviewsData | null }) {
+export default function App({ activities, posts, locale, reviews, heroPresentation, surfPackages, surfLessons }: { activities: Activity[]; posts: BlogPost[]; locale: Locale; reviews: GoogleReviewsData | null; heroPresentation: HeroPresentationSettings; surfPackages: SurfPackage[]; surfLessons: SurfLesson[] }) {
   return (
     <>
       <PageLoader />
@@ -38,10 +41,10 @@ export default function App({ activities, posts, locale, reviews }: { activities
       <main>
         <ScrollFilm locale={locale} />
         <ScrollMotion>
-          <HeroPresentation locale={locale} />
-          <SurfPackagesSection locale={locale} />
+          <HeroPresentation locale={locale} settings={heroPresentation} />
+          <SurfPackagesSection locale={locale} packages={surfPackages} />
           <div className="surf-section-transition" aria-hidden="true" />
-          <SurfLessonsSection activities={activities} locale={locale} />
+          <SurfLessonsSection lessons={surfLessons.filter((lesson) => lesson.published && lesson.showOnHomepage).slice(0, 3)} locale={locale} />
           <div className="surf-section-transition" aria-hidden="true" />
           <ActivitiesAdventuresSection activities={activities} locale={locale} />
           <div className="surf-section-transition" aria-hidden="true" />

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import SurfPackagesPage from "../../src/components/SurfPackagesPage";
+import { connection } from "next/server";
+import { getSurfPackages } from "../../src/server/surf-package-catalog";
 import "./surf-packages.css";
 
 export const metadata: Metadata = {
@@ -8,6 +10,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/surf-packages" },
 };
 
-export default function Page() {
-  return <SurfPackagesPage />;
+export default async function Page() {
+  if (process.env.DATABASE_URL) await connection();
+  const packages = await getSurfPackages();
+  return <SurfPackagesPage packages={packages} />;
 }

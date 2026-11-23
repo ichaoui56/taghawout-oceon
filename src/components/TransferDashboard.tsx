@@ -31,12 +31,26 @@ import BlogManagement from "./BlogManagement";
 import DashboardAccountSettings from "./DashboardAccountSettings";
 import DashboardSeoManagement from "./DashboardSeoManagement";
 import ConciergeManagement from "./ConciergeManagement";
+import HeroPresentationManagement from "./HeroPresentationManagement";
 import type { SiteSeoSettings } from "../seo";
 import type { ConciergeSectionSettings } from "../concierge";
+import type { HeroPresentationSettings } from "../hero-presentation";
 import type { ManagedBlogPost } from "../server/blog-catalog";
 import GoogleReviewsManagement from "./GoogleReviewsManagement";
 import type { GoogleReviewsSettings, ManagedGoogleReview } from "../server/google-reviews";
 import type { DashboardPage } from "./TransferDashboardWrapper";
+import SurfPackageCatalogManagement from "./SurfPackageCatalogManagement";
+import SurfPackageEditor from "./SurfPackageEditor";
+import SurfPackageReservationManagement from "./SurfPackageReservationManagement";
+import type { SurfPackage } from "../surf-packages";
+import type { ManagedSurfPackageReservation } from "../server/surf-package-catalog";
+import SurfLessonCatalogManagement from "./SurfLessonCatalogManagement";
+import SurfLessonEditor from "./SurfLessonEditor";
+import SurfLessonReservationManagement from "./SurfLessonReservationManagement";
+import type { SurfLesson } from "../surf-lessons";
+import type { ManagedSurfLessonReservation } from "../server/surf-lesson-catalog";
+import CustomerDirectory from "./CustomerDirectory";
+import type { ManagedCustomer } from "../server/customer-directory";
 
 type Props = {
   user: TransferDashboardUser;
@@ -54,6 +68,18 @@ type Props = {
   managedBlogCount: number;
   siteSeoSettings: SiteSeoSettings | null;
   conciergeSettings: ConciergeSectionSettings | null;
+  heroPresentationSettings: HeroPresentationSettings | null;
+  surfPackages: SurfPackage[];
+  surfPackageDetail: SurfPackage | null;
+  isNewSurfPackage: boolean;
+  surfPackageReservations: ManagedSurfPackageReservation[];
+  surfPackageReservationCount: number;
+  surfLessons: SurfLesson[];
+  surfLessonDetail: SurfLesson | null;
+  isNewSurfLesson: boolean;
+  surfLessonReservations: ManagedSurfLessonReservation[];
+  surfLessonReservationCount: number;
+  customers: ManagedCustomer[];
   transferRequestDetail: TransferRequestData | null;
   activityReservationDetail: ManagedActivityReservation | null;
 };
@@ -62,6 +88,7 @@ type DashboardTab = "routes" | "private" | "locations";
 type AddMode = "choose" | "route" | "service" | "location" | null;
 type RequestStatusFilter = TransferRequestData["status"] | "ALL";
 type RequestView = "cards" | "table";
+type TransferRequestGroup = readonly [string, TransferRequestData[]];
 type RequestPageSize = 10 | 25 | 50 | 100;
 
 const transferTabs: { id: Exclude<DashboardTab, "requests">; label: string; icon: string }[] = [
@@ -146,6 +173,55 @@ function formatRequestDay(date: string) {
     year: "numeric",
     timeZone: "UTC",
   }).format(new Date(`${date.slice(0, 10)}T00:00:00Z`));
+}
+
+function getCustomerInitials(name: string) {
+  return name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? "").join("") || "?";
+}
+
+function TransferRequestPagination({
+  view,
+  pageSize,
+  startIndex,
+  endIndex,
+  total,
+  currentPage,
+  pageCount,
+  pages,
+  onPageSizeChange,
+  onPageChange,
+}: {
+  view: RequestView;
+  pageSize: RequestPageSize;
+  startIndex: number;
+  endIndex: number;
+  total: number;
+  currentPage: number;
+  pageCount: number;
+  pages: (number | "start-ellipsis" | "end-ellipsis")[];
+  onPageSizeChange: (size: RequestPageSize) => void;
+  onPageChange: (page: number) => void;
+}) {
+  return (
+    <nav className="transfer-request-pagination" aria-label="Transfer request pages">
+      <div className="transfer-request-pagination__summary">
+        <label htmlFor="transfer-request-page-size">{view === "cards" ? "Reservations per page" : "Rows per page"}</label>
+        <select id="transfer-request-page-size" value={pageSize} onChange={(event) => onPageSizeChange(Number(event.target.value) as RequestPageSize)}>
+          {[10, 25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
+        </select>
+        <span className="transfer-request-pagination__range">{total ? `${startIndex + 1}–${endIndex} of ${total}` : "0 results"}</span>
+      </div>
+      <div className="transfer-request-pagination__controls">
+        <button type="button" className="transfer-request-pagination__direction" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1} aria-label="Previous page"><span aria-hidden="true">←</span><span>Previous</span></button>
+        <div className="transfer-request-pagination__pages">
+          {pages.map((pageNumber) => typeof pageNumber === "number" ? (
+            <button type="button" key={pageNumber} className={pageNumber === currentPage ? "is-current" : ""} aria-current={pageNumber === currentPage ? "page" : undefined} aria-label={`Page ${pageNumber}`} onClick={() => onPageChange(pageNumber)}>{pageNumber}</button>
+          ) : <span key={pageNumber} className="transfer-request-pagination__ellipsis" aria-hidden="true">…</span>)}
+        </div>
+        <button type="button" className="transfer-request-pagination__direction" onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === pageCount} aria-label="Next page"><span>Next</span><span aria-hidden="true">→</span></button>
+      </div>
+    </nav>
+  );
 }
 
 function getErrorMessage(error: unknown) {
@@ -327,13 +403,25 @@ export default function TransferDashboard({
   managedBlogCount,
   siteSeoSettings,
   conciergeSettings,
+  heroPresentationSettings,
+  surfPackages,
+  surfPackageDetail,
+  isNewSurfPackage,
+  surfPackageReservations,
+  surfPackageReservationCount,
+  surfLessons,
+  surfLessonDetail,
+  isNewSurfLesson,
+  surfLessonReservations,
+  surfLessonReservationCount,
+  customers,
   transferRequestDetail,
   activityReservationDetail,
 }: Props) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<DashboardTab>("routes");
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [requestCategory, setRequestCategory] = useState<DashboardTab>("routes");
+  const requestCategory: DashboardTab = "routes";
   const [requestStatusFilter, setRequestStatusFilter] = useState<RequestStatusFilter>("ALL");
   const [requestSearch, setRequestSearch] = useState("");
   const [requestView, setRequestView] = useState<RequestView>("cards");
@@ -355,7 +443,6 @@ export default function TransferDashboard({
     locations: data.requests.filter((request) => request.serviceType === requestServiceTypes.locations),
   };
   const categoryRequests = requestsByCategory[requestCategory];
-  const newRequests = data.requests.filter((request) => request.status === "NEW").length;
   const categoryNewRequests = categoryRequests.filter((request) => request.status === "NEW").length;
   const categoryConfirmedRequests = categoryRequests.filter((request) => request.status === "CONFIRMED").length;
   const categoryCompletedRequests = categoryRequests.filter((request) => request.status === "COMPLETED").length;
@@ -371,19 +458,57 @@ export default function TransferDashboard({
     const matchesSearch = !query || [
       request.customerName,
       request.customerPhone,
+      request.customerEmail ?? "",
       request.serviceName,
       request.departure,
       request.arrival ?? "",
+      request.flightNumber ?? "",
+      request.hotelAddress ?? "",
+      request.notes ?? "",
     ].some((value) => value.toLocaleLowerCase().includes(query));
     return matchesStatus && matchesSearch && matchesDateRange;
   });
   const sortedVisibleRequests = [...visibleRequests].sort((first, second) =>
     Date.parse(second.createdAt) - Date.parse(first.createdAt),
   );
-  const requestPageCount = Math.max(1, Math.ceil(sortedVisibleRequests.length / requestPageSize));
+  const groupedRequestMap = sortedVisibleRequests.reduce((groups, request) => {
+    const date = request.serviceDate.slice(0, 10);
+    const requests = groups.get(date) ?? [];
+    requests.push(request);
+    groups.set(date, requests);
+    return groups;
+  }, new Map<string, TransferRequestData[]>());
+  const requestGroups: TransferRequestGroup[] = [...groupedRequestMap.entries()]
+    .sort(([firstDate], [secondDate]) => secondDate.localeCompare(firstDate))
+    .map(([date, requests]) => [
+      date,
+      [...requests].sort((first, second) => (first.serviceTime ?? "").localeCompare(second.serviceTime ?? "")),
+    ] as const);
+  const requestGroupPages: TransferRequestGroup[][] = [];
+  let currentGroupPage: TransferRequestGroup[] = [];
+  let currentGroupPageCount = 0;
+  for (const group of requestGroups) {
+    if (currentGroupPage.length && currentGroupPageCount + group[1].length > requestPageSize) {
+      requestGroupPages.push(currentGroupPage);
+      currentGroupPage = [];
+      currentGroupPageCount = 0;
+    }
+    currentGroupPage.push(group);
+    currentGroupPageCount += group[1].length;
+  }
+  if (currentGroupPage.length) requestGroupPages.push(currentGroupPage);
+  const requestPageCount = Math.max(1, requestView === "cards"
+    ? requestGroupPages.length
+    : Math.ceil(sortedVisibleRequests.length / requestPageSize));
   const currentRequestPage = Math.min(requestPage, requestPageCount);
   const pageStartIndex = (currentRequestPage - 1) * requestPageSize;
   const paginatedRequests = sortedVisibleRequests.slice(pageStartIndex, pageStartIndex + requestPageSize);
+  const paginatedRequestGroups = requestGroupPages[currentRequestPage - 1] ?? [];
+  const cardItemsBeforePage = requestGroupPages.slice(0, currentRequestPage - 1)
+    .reduce((total, groups) => total + groups.reduce((count, group) => count + group[1].length, 0), 0);
+  const cardItemsOnPage = paginatedRequestGroups.reduce((count, group) => count + group[1].length, 0);
+  const paginationStart = requestView === "cards" ? cardItemsBeforePage : pageStartIndex;
+  const paginationEnd = requestView === "cards" ? cardItemsBeforePage + cardItemsOnPage : Math.min(pageStartIndex + requestPageSize, sortedVisibleRequests.length);
   const paginationPages: (number | "start-ellipsis" | "end-ellipsis")[] = [];
   if (requestPageCount <= 7) {
     paginationPages.push(...Array.from({ length: requestPageCount }, (_, index) => index + 1));
@@ -396,17 +521,6 @@ export default function TransferDashboard({
     if (currentRequestPage < requestPageCount - 2) paginationPages.push("end-ellipsis");
     paginationPages.push(requestPageCount);
   }
-  const requestGroups = [...sortedVisibleRequests.reduce((groups, request) => {
-    const date = request.serviceDate.slice(0, 10);
-    const requests = groups.get(date) ?? [];
-    requests.push(request);
-    groups.set(date, requests);
-    return groups;
-  }, new Map<string, TransferRequestData[]>()).entries()]
-    .map(([date, requests]) => [
-      date,
-      requests,
-    ] as const);
   const recentRequests = [...data.requests]
     .sort((first, second) => Date.parse(second.createdAt) - Date.parse(first.createdAt))
     .slice(0, 5);
@@ -432,6 +546,22 @@ export default function TransferDashboard({
             ? "Customer reviews"
           : page === "settings"
             ? "Account settings"
+          : page === "presentation"
+            ? "Hero presentation"
+          : page === "surf-packages"
+            ? "Surf packages"
+          : page === "surf-package-detail"
+            ? isNewSurfPackage ? "Add surf package" : "Edit surf package"
+          : page === "surf-package-reservations"
+            ? "Surf package reservations"
+          : page === "surf-lessons"
+            ? "Surf lessons"
+          : page === "surf-lesson-detail"
+            ? isNewSurfLesson ? "Add surf lesson" : "Edit surf lesson"
+          : page === "surf-lesson-reservations"
+            ? "Surf lesson reservations"
+          : page === "customers"
+            ? "Customers"
           : page === "seo"
             ? "Website SEO"
           : "Transfer management";
@@ -639,30 +769,27 @@ export default function TransferDashboard({
             <Link href="/dashboard" className={page === "overview" ? "is-active" : ""} title="Dashboard">
               <span><DashboardIcon name="grid" /></span><span>Dashboard</span>
             </Link>
-            <Link href="/dashboard/requests" className={page === "requests" || page === "request-detail" ? "is-active" : ""} title="Bookings">
-              <span><DashboardIcon name="calendar" /></span><span>Bookings</span>
-              {newRequests > 0 && <b className="transfer-sidebar__alert-count">{newRequests}</b>}
-            </Link>
             {isAdmin && (
-              <Link href="/dashboard/transfers" className={page === "transfers" ? "is-active" : ""} title="Surf Packages">
-                <span><DashboardIcon name="package" /></span><span>Packages</span>
-                <b className="transfer-sidebar__count">{data.routes.length + data.services.length + data.locations.length}</b>
-              </Link>
-            )}
-            {isAdmin && (
-              <Link href="/dashboard/activities" className={page === "activities" ? "is-active" : ""} title="Surf Lessons">
-                <span><DashboardIcon name="surf" /></span><span>Surf Lessons</span>
-              </Link>
-            )}
-            {isAdmin && (
-              <Link href="/dashboard/requests" title="Customers">
-                <span><DashboardIcon name="users" /></span><span>Customers</span>
+              <Link href="/dashboard/surf-lesson-reservations" className={page === "surf-lesson-reservations" ? "is-active" : ""} title="Surf lesson reservations">
+                <span><DashboardIcon name="surf" /></span><span>Surf lessons</span>
+                <b className="transfer-sidebar__count">{surfLessonReservationCount}</b>
               </Link>
             )}
             {isAdmin && (
               <Link href="/dashboard/activity-reservations" className={page === "activity-reservations" || page === "activity-reservation-detail" ? "is-active" : ""} title="Activity reservations">
-                <span><DashboardIcon name="card" /></span><span>Bookings</span>
+                <span><DashboardIcon name="card" /></span><span>Activity Bookings</span>
                 <b className="transfer-sidebar__count">{activityReservationCount}</b>
+              </Link>
+            )}
+            {isAdmin && (
+              <Link href="/dashboard/requests/surf-packages" className={page === "surf-package-reservations" ? "is-active" : ""} title="Surf packages">
+                <span><DashboardIcon name="package" /></span><span>Surf packages</span>
+                <b className="transfer-sidebar__count">{surfPackageReservationCount}</b>
+              </Link>
+            )}
+            {isAdmin && (
+              <Link href="/dashboard/customers" className={page === "customers" ? "is-active" : ""} title="Customers">
+                <span><DashboardIcon name="users" /></span><span>Customers</span>
               </Link>
             )}
           </div>
@@ -673,6 +800,13 @@ export default function TransferDashboard({
                 <span><DashboardIcon name="activity" /></span><span>Activities</span>
                 <b className="transfer-sidebar__count">{managedActivityCount}</b>
               </Link>
+              <Link href="/dashboard/surf-packages" className={page === "surf-packages" || page === "surf-package-detail" ? "is-active" : ""} title="Surf packages">
+                <span><DashboardIcon name="surf" /></span><span>Surf packages</span>
+              </Link>
+              <Link href="/dashboard/surf-lessons" className={page === "surf-lessons" || page === "surf-lesson-detail" ? "is-active" : ""} title="Surf lessons catalog">
+                <span><DashboardIcon name="surf" /></span><span>Surf lessons</span>
+                <b className="transfer-sidebar__count">{surfLessons.length}</b>
+              </Link>
               <Link href="/dashboard/blogs" className={page === "blogs" ? "is-active" : ""} title="Blog / Content">
                 <span><DashboardIcon name="content" /></span><span>Blog / Content</span>
                 <b className="transfer-sidebar__count">{managedBlogCount}</b>
@@ -681,8 +815,8 @@ export default function TransferDashboard({
                 <span><DashboardIcon name="star" /></span><span>Reviews</span>
                 <b className="transfer-sidebar__count">{managedGoogleReviewCount}</b>
               </Link>
-              <Link href="/dashboard/concierge" className={page === "concierge" ? "is-active" : ""} title="Concierge">
-                <span><DashboardIcon name="pin" /></span><span>Concierge</span>
+              <Link href="/dashboard/presentation" className={page === "presentation" ? "is-active" : ""} title="Hero presentation">
+                <span><DashboardIcon name="content" /></span><span>Hero presentation</span>
               </Link>
               <Link href="/dashboard/seo" className={page === "seo" ? "is-active" : ""} title="Website SEO settings">
                 <span aria-hidden="true">⌕</span><span>Website SEO</span>
@@ -768,7 +902,7 @@ export default function TransferDashboard({
             <div>
               <p className="transfer-eyebrow">Travel operations · Morocco</p>
               <h1>{heading}</h1>
-              <p>{page === "overview" ? "A clear view of your bookings, routes and guest experiences." : page === "requests" ? "Review guest details and keep every booking moving." : page === "request-detail" ? "Full guest, journey and booking details." : page === "activities" ? "Create and publish experiences with complete content and flexible pricing." : page === "activity-detail" ? "Complete content, schedule and booking setup for this experience." : page === "activity-reservations" ? "Review guest requests, confirm availability and manage every experience booking." : page === "activity-reservation-detail" ? "Guest details, scheduled activities and booking status." : page === "blogs" ? "Create stories, control publication, and manage search and social previews." : page === "reviews" ? "Add and publish customer reviews, profile photos, and your Google location." : page === "settings" ? "Update your dashboard username and password." : page === "seo" ? "Manage global metadata, crawling, verification, social previews, and structured identity." : "Manage all transfer options from one place."}</p>
+              <p>{page === "overview" ? "A clear view of your bookings, routes and guest experiences." : page === "requests" ? "Review guest details and keep every booking moving." : page === "request-detail" ? "Full guest, journey and booking details." : page === "activities" ? "Create and publish experiences with complete content and flexible pricing." : page === "activity-detail" ? "Complete content, schedule and booking setup for this experience." : page === "activity-reservations" ? "Review guest requests, confirm availability and manage every experience booking." : page === "activity-reservation-detail" ? "Guest details, scheduled activities and booking status." : page === "blogs" ? "Create stories, control publication, and manage search and social previews." : page === "reviews" ? "Add and publish customer reviews, profile photos, and your Google location." : page === "settings" ? "Update your dashboard username and password." : page === "presentation" ? "Edit the homepage hero copy, buttons, and featured experience cards." : page === "surf-packages" ? "Manage bilingual package details, pricing, booking times, and homepage features." : page === "surf-package-reservations" ? "Review guest details, dates, times, party sizes, totals, and reservation status." : page === "surf-lessons" ? "Create and publish lessons with bilingual details, pricing, booking times, and homepage features." : page === "surf-lesson-detail" ? "Edit lesson details, pricing, schedule, and visibility." : page === "surf-lesson-reservations" ? "Review lesson bookings, guest details, dates, times, totals, and reservation status." : page === "customers" ? "One record per guest with booking history across surf packages, surf lessons, and activities." : page === "seo" ? "Manage global metadata, crawling, verification, social previews, and structured identity." : "Manage all transfer options from one place."}</p>
             </div>
             {isAdmin && page === "transfers" && (
               <button type="button" className="transfer-add-button" onClick={startAdd}>
@@ -897,6 +1031,22 @@ export default function TransferDashboard({
 
           {page === "seo" && isAdmin && siteSeoSettings && <DashboardSeoManagement initialSettings={siteSeoSettings} />}
 
+          {page === "presentation" && isAdmin && heroPresentationSettings && <HeroPresentationManagement initialSettings={heroPresentationSettings} />}
+
+          {page === "surf-packages" && isAdmin && <SurfPackageCatalogManagement initialPackages={surfPackages} />}
+
+          {page === "surf-package-detail" && isAdmin && surfPackageDetail && <SurfPackageEditor initialPackage={surfPackageDetail} isNew={isNewSurfPackage} />}
+
+          {page === "surf-package-reservations" && isAdmin && <SurfPackageReservationManagement items={surfPackageReservations} />}
+
+          {page === "surf-lessons" && isAdmin && <SurfLessonCatalogManagement initialLessons={surfLessons} />}
+
+          {page === "surf-lesson-detail" && isAdmin && surfLessonDetail && <SurfLessonEditor initialLesson={surfLessonDetail} isNew={isNewSurfLesson} />}
+
+          {page === "surf-lesson-reservations" && isAdmin && <SurfLessonReservationManagement items={surfLessonReservations} />}
+
+          {page === "customers" && isAdmin && <CustomerDirectory customers={customers} />}
+
           {page === "concierge" && isAdmin && conciergeSettings && <ConciergeManagement initialSettings={conciergeSettings} />}
 
           {page === "activity-detail" && isAdmin && activityDetail && (
@@ -917,25 +1067,6 @@ export default function TransferDashboard({
 
           {page === "requests" && (
             <>
-              <nav className="transfer-type-tabs" aria-label="Request types">
-                {transferTabs.map((tab) => (
-                  <button
-                    type="button"
-                    key={tab.id}
-                    className={requestCategory === tab.id ? "is-active" : ""}
-                    aria-current={requestCategory === tab.id ? "page" : undefined}
-                    onClick={() => {
-                      setRequestCategory(tab.id);
-                      setRequestPage(1);
-                    }}
-                  >
-                    <span aria-hidden="true">{tab.icon}</span>
-                    <span>{tab.label}</span>
-                    <b>{requestsByCategory[tab.id].length}</b>
-                  </button>
-                ))}
-              </nav>
-
               <section className="transfer-request-kpis" aria-label="Request statistics for selected type">
                 {([
                   { status: "ALL", label: "Total requests", value: categoryRequests.length, note: "In this request type", icon: "▤", style: "total" },
@@ -987,10 +1118,10 @@ export default function TransferDashboard({
                   <div className="transfer-requests-toolbar__end">
                     <p>{invalidRequestDateRange ? "Choose a valid date range" : requestStatusFilter === "ALL" ? "Newest requests first" : `${statusLabels[requestStatusFilter]} · newest first`}</p>
                     <div className="transfer-request-view-toggle" role="group" aria-label="Request display">
-                      <button type="button" className={requestView === "cards" ? "is-active" : ""} aria-pressed={requestView === "cards"} onClick={() => setRequestView("cards")}>
+                      <button type="button" className={requestView === "cards" ? "is-active" : ""} aria-pressed={requestView === "cards"} onClick={() => { setRequestView("cards"); setRequestPage(1); }}>
                         <span aria-hidden="true">▦</span> Cards
                       </button>
-                      <button type="button" className={requestView === "table" ? "is-active" : ""} aria-pressed={requestView === "table"} onClick={() => setRequestView("table")}>
+                      <button type="button" className={requestView === "table" ? "is-active" : ""} aria-pressed={requestView === "table"} onClick={() => { setRequestView("table"); setRequestPage(1); }}>
                         <span aria-hidden="true">☷</span> Table
                       </button>
                     </div>
@@ -1001,11 +1132,12 @@ export default function TransferDashboard({
                 ) : visibleRequests.length === 0 ? (
                   <div className="transfer-empty transfer-empty--compact"><span aria-hidden="true">⌕</span><h3>{invalidRequestDateRange ? "Check your date range" : "No matching requests"}</h3><p>{invalidRequestDateRange ? "The start date must be on or before the end date." : "Try a different search, date range or status filter."}</p><button type="button" onClick={() => { setRequestSearch(""); setRequestStatusFilter("ALL"); setRequestDateFrom(""); setRequestDateTo(""); setRequestPage(1); }}>Clear filters</button></div>
                 ) : requestView === "cards" ? (
+                  <>
                   <div className="transfer-request-days">
-                    {requestGroups.map(([date, requests]) => (
+                    {paginatedRequestGroups.map(([date, requests]) => (
                       <section className="transfer-request-day" key={date} aria-label={`Requests for ${formatRequestDay(date)}`}>
                         <header className="transfer-request-day__heading">
-                          <span className="transfer-request-day__date-icon" aria-hidden="true">▦</span>
+                          <span className="transfer-request-day__date-icon"><DashboardIcon name="calendar" /></span>
                           <div><h3>{formatRequestDay(date)}</h3><p>{requests.length} {requests.length === 1 ? "reservation" : "reservations"}</p></div>
                           <span className="transfer-request-day__count">{requests.length.toString().padStart(2, "0")}</span>
                         </header>
@@ -1018,14 +1150,15 @@ export default function TransferDashboard({
                                   <span className={`transfer-status ${statusClasses[request.status]}`}>{statusLabels[request.status]}</span>
                                 </span>
                                 <span className="transfer-request-card__guest">
-                                  <span className="transfer-request-card__avatar" aria-hidden="true">{request.customerName.slice(0, 1).toUpperCase()}</span>
-                                  <span><strong>{request.customerName}</strong><small>{request.customerPhone}</small></span>
+                                  <span className="transfer-request-card__avatar" aria-hidden="true">{getCustomerInitials(request.customerName)}</span>
+                                  <span><strong>{request.customerName}</strong><small>{request.customerEmail || request.customerPhone}</small>{request.customerEmail && <small>{request.customerPhone}</small>}</span>
                                   <span className="transfer-request-card__arrow" aria-hidden="true">↗</span>
                                 </span>
-                                <span className="transfer-request-card__service"><strong>{request.serviceName}</strong><small>{request.departure}{request.arrival ? ` → ${request.arrival}` : ""}</small></span>
+                                <span className="transfer-request-card__service"><strong>{request.serviceName}</strong>{(request.departure || request.arrival) && <small>{request.departure}{request.arrival ? ` → ${request.arrival}` : ""}</small>}{request.flightNumber && <small>Flight · {request.flightNumber}</small>}{request.hotelAddress && <small>Stay · {request.hotelAddress}</small>}</span>
                                 <span className="transfer-request-card__meta">
                                   <span><small>Guests</small><strong>{request.passengerCount}</strong></span>
                                   <span><small>Luggage</small><strong>{request.luggageCount} {request.luggageCount === 1 ? "bag" : "bags"}</strong></span>
+                                  {request.priceAtRequest !== null && <span><small>Quoted</small><strong>{formatCurrency(request.priceAtRequest, request.currency)}</strong></span>}
                                   {request.serviceType === "PRIVATE_SERVICE" && request.status === "CONFIRMED" && <span className="transfer-reserved-slot"><b aria-hidden="true">×</b> Réservé</span>}
                                 </span>
                               </Link>
@@ -1035,6 +1168,19 @@ export default function TransferDashboard({
                       </section>
                     ))}
                   </div>
+                  <TransferRequestPagination
+                    view={requestView}
+                    pageSize={requestPageSize}
+                    startIndex={paginationStart}
+                    endIndex={paginationEnd}
+                    total={sortedVisibleRequests.length}
+                    currentPage={currentRequestPage}
+                    pageCount={requestPageCount}
+                    pages={paginationPages}
+                    onPageSizeChange={(size) => { setRequestPageSize(size); setRequestPage(1); }}
+                    onPageChange={setRequestPage}
+                  />
+                  </>
                 ) : (
                   <>
                     <div className="transfer-table-wrap">
@@ -1044,9 +1190,9 @@ export default function TransferDashboard({
                           {paginatedRequests.map((request) => (
                             <tr key={request.id} className={request.status === "NEW" ? "is-new" : ""}>
                               <td>
-                                <Link className="transfer-request-guest transfer-request-guest__link" href={`/dashboard/requests/${request.id}`} aria-label={`Open ${request.customerName} request`}><span aria-hidden="true">{request.customerName.slice(0, 1).toUpperCase()}</span><span><strong>{request.customerName}</strong><small>{request.customerPhone}</small></span></Link>
+                                <Link className="transfer-request-guest transfer-request-guest__link" href={`/dashboard/requests/${request.id}`} aria-label={`Open ${request.customerName} request`}><span aria-hidden="true">{getCustomerInitials(request.customerName)}</span><span><strong>{request.customerName}</strong><small>{request.customerEmail || request.customerPhone}</small>{request.customerEmail && <small>{request.customerPhone}</small>}</span></Link>
                               </td>
-                              <td><strong>{request.serviceName}</strong><small>{request.departure}{request.arrival ? ` → ${request.arrival}` : ""}</small></td>
+                              <td><strong>{request.serviceName}</strong>{(request.departure || request.arrival) && <small>{request.departure}{request.arrival ? ` → ${request.arrival}` : ""}</small>}{request.flightNumber && <small>Flight · {request.flightNumber}</small>}{request.hotelAddress && <small>Stay · {request.hotelAddress}</small>}</td>
                               <td>
                                 <strong>{formatDate(request.serviceDate)}</strong>
                                 <small>{request.serviceTime || "Time not set"}</small>
@@ -1062,48 +1208,18 @@ export default function TransferDashboard({
                         </tbody>
                       </table>
                     </div>
-                    <nav className="transfer-request-pagination" aria-label="Transfer request pages">
-                      <div className="transfer-request-pagination__summary">
-                        <label htmlFor="transfer-request-page-size">Rows per page</label>
-                        <select
-                          id="transfer-request-page-size"
-                          value={requestPageSize}
-                          onChange={(event) => {
-                            setRequestPageSize(Number(event.target.value) as RequestPageSize);
-                            setRequestPage(1);
-                          }}
-                        >
-                          {[10, 25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
-                        </select>
-                        <span className="transfer-request-pagination__range">
-                          {pageStartIndex + 1}–{Math.min(pageStartIndex + requestPageSize, sortedVisibleRequests.length)} of {sortedVisibleRequests.length}
-                        </span>
-                      </div>
-                      <div className="transfer-request-pagination__controls">
-                        <button type="button" className="transfer-request-pagination__direction" onClick={() => setRequestPage(currentRequestPage - 1)} disabled={currentRequestPage === 1} aria-label="Previous page">
-                          <span aria-hidden="true">←</span><span>Previous</span>
-                        </button>
-                        <div className="transfer-request-pagination__pages">
-                          {paginationPages.map((pageNumber) => typeof pageNumber === "number" ? (
-                            <button
-                              type="button"
-                              key={pageNumber}
-                              className={pageNumber === currentRequestPage ? "is-current" : ""}
-                              aria-current={pageNumber === currentRequestPage ? "page" : undefined}
-                              aria-label={`Page ${pageNumber}`}
-                              onClick={() => setRequestPage(pageNumber)}
-                            >
-                              {pageNumber}
-                            </button>
-                          ) : (
-                            <span key={pageNumber} className="transfer-request-pagination__ellipsis" aria-hidden="true">…</span>
-                          ))}
-                        </div>
-                        <button type="button" className="transfer-request-pagination__direction" onClick={() => setRequestPage(currentRequestPage + 1)} disabled={currentRequestPage === requestPageCount} aria-label="Next page">
-                          <span>Next</span><span aria-hidden="true">→</span>
-                        </button>
-                      </div>
-                    </nav>
+                    <TransferRequestPagination
+                      view={requestView}
+                      pageSize={requestPageSize}
+                      startIndex={paginationStart}
+                      endIndex={paginationEnd}
+                      total={sortedVisibleRequests.length}
+                      currentPage={currentRequestPage}
+                      pageCount={requestPageCount}
+                      pages={paginationPages}
+                      onPageSizeChange={(size) => { setRequestPageSize(size); setRequestPage(1); }}
+                      onPageChange={setRequestPage}
+                    />
                   </>
                 )}
               </section>
