@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Locale } from "../i18n";
+import type { AboutOceanSettings } from "../homepage-sections";
 
 type AboutIconName = "wave" | "board" | "coach" | "compass" | "mountain" | "pin" | "star";
 
@@ -18,133 +18,33 @@ function AboutIcon({ name }: { name: AboutIconName }) {
   );
 }
 
-const text = {
-  en: {
-    eyebrow: "ABOUT TAGHAZOUT OCEAN",
-    titleLead: "More Than a Surf Trip.",
-    titleAccent: "A True Ocean Experience.",
-    introduction: "Born from a love of the Atlantic, Taghazout Ocean connects visitors with the waves, culture and people of Morocco's coastline.",
-    discoverStory: "Discover Our Story",
-    signature: "Surf · Explore · Relax",
-    storyEyebrow: "OUR STORY",
-    storyTitle: "A Local Dream with a Global Vision",
-    beginningTitle: "Our Beginning",
-    beginning: "A local passion for surfing and the Atlantic coastline inspired us to share the magic of Taghazout with the world.",
-    beginningImageAlt: "The Moroccan coastline near Taghazout",
-    journeyTitle: "Our Journey",
-    journey: [
-      "A love for the ocean",
-      "Sharing the waves",
-      "Growing together",
-      "Looking ahead",
-    ],
-    whatTitle: "What We Do",
-    services: [
-      "Surf Lessons",
-      "Surf Packages",
-      "Surf Coaching",
-      "Travel Experiences",
-      "Local Adventures",
-    ],
-    impactEyebrow: "OUR IMPACT",
-    impactTitle: ["A Growing Community", "of Ocean Lovers"],
-    impactDescription: "Our mission is to share the ocean, Moroccan culture and create memorable experiences together.",
-    highlights: [
-      ["Local roots", "Inspired by Taghazout"],
-      ["Ocean first", "Connected to the Atlantic"],
-      ["More to discover", "Surf, culture, and adventure"],
-    ],
-    cta: "Discover Taghazout With Us",
-    lessons: "Surf lessons",
-    packages: "Surf packages",
-    activities: "Local activities",
-    surferAlt: "A surfer riding a powerful Atlantic wave",
-    coastAlt: "The Atlantic coastline near Taghazout, Morocco",
-    groupAlt: "A surf session shared on the Atlantic coast",
-  },
-  fr: {
-    eyebrow: "À PROPOS DE TAGHAZOUT OCEAN",
-    titleLead: "Bien plus qu'un séjour de surf.",
-    titleAccent: "Une véritable expérience océanique.",
-    introduction: "Bienvenue chez Taghazout Ocean, où l'esprit du surf rencontre la beauté de la côte atlantique marocaine. Nous partageons avec passion la magie de Taghazout à travers des expériences de surf inoubliables, des aventures locales et une hospitalité marocaine authentique.",
-    discoverStory: "Découvrir notre histoire",
-    signature: "Surfer · Explorer · Se détendre",
-    storyEyebrow: "NOTRE HISTOIRE",
-    storyTitle: "Un rêve local tourné vers le monde",
-    beginningTitle: "Nos débuts",
-    beginning: "Une passion locale pour le surf et la côte atlantique nous a donné envie de partager la magie de Taghazout avec le monde.",
-    beginningImageAlt: "Le littoral marocain près de Taghazout",
-    journeyTitle: "Notre parcours",
-    journey: [
-      "L'amour de l'océan",
-      "Partager les vagues",
-      "Grandir ensemble",
-      "Voir plus loin",
-    ],
-    whatTitle: "Nos activités",
-    services: [
-      "Cours de surf",
-      "Séjours surf",
-      "Coaching surf",
-      "Expériences locales",
-      "Aventures locales",
-    ],
-    impactEyebrow: "NOTRE ENGAGEMENT",
-    impactTitle: ["Une communauté", "réunie par l'océan"],
-    impactDescription: "Notre mission : partager l'océan et la culture marocaine pour créer ensemble des expériences mémorables.",
-    highlights: [
-      ["Ancrés localement", "Inspirés par Taghazout"],
-      ["L'océan d'abord", "Au bord de l'Atlantique"],
-      ["À découvrir", "Surf, culture et aventure"],
-    ],
-    cta: "Découvrir Taghazout avec nous",
-    lessons: "Cours de surf",
-    packages: "Séjours surf",
-    activities: "Activités locales",
-    surferAlt: "Un surfeur glisse sur une puissante vague de l'Atlantique",
-    coastAlt: "Le littoral atlantique près de Taghazout, au Maroc",
-    groupAlt: "Une session de surf partagée sur la côte atlantique",
-  },
-} as const;
-
-export default function AboutOceanSection({ locale }: { locale: Locale }) {
-  const copy = text[locale];
+export default function AboutOceanSection({ locale, settings }: { locale: Locale; settings: AboutOceanSettings }) {
+  const hero = settings.hero;
+  const impact = settings.impact;
 
   return (
     <div id="about-ocean" className="about-ocean">
       <section id="about" className="about-ocean__hero" aria-labelledby="about-ocean-title">
         <div className="about-ocean__hero-inner">
           <div className="about-ocean__intro" data-reveal>
-            <p className="about-ocean__eyebrow"><span>{copy.eyebrow}</span><i aria-hidden="true" /></p>
-            <h2 id="about-ocean-title">{copy.titleLead} <em>{copy.titleAccent}</em></h2>
-            <p className="about-ocean__lead">{copy.introduction}</p>
+            <p className="about-ocean__eyebrow"><span>{hero.eyebrow[locale]}</span><i aria-hidden="true" /></p>
+            <h2 id="about-ocean-title">{hero.titleLead[locale]} <em>{hero.titleAccent[locale]}</em></h2>
+            <p className="about-ocean__lead">{hero.introduction[locale]}</p>
             <Link href="#our-story" className="about-ocean__button">
-              {copy.discoverStory}<span aria-hidden="true">→</span>
+              {hero.discoverStory[locale]}<span aria-hidden="true">→</span>
             </Link>
-            <p className="about-ocean__signature">{copy.signature}</p>
+            <p className="about-ocean__signature">{hero.signature[locale]}</p>
           </div>
 
           <div className="about-ocean__visual" data-reveal>
             <figure className="about-ocean__surfer">
-              <Image
-                src="https://images.unsplash.com/photo-1455729552865-3658a5d39692?auto=format&fit=crop&w=1600&q=88"
-                alt={copy.surferAlt}
-                fill
-                sizes="(max-width: 720px) 100vw, 55vw"
-                loading="lazy"
-              />
+              <img src={hero.images[0].image} alt={hero.images[0].alt[locale]} loading="lazy" />
             </figure>
             <figure className="about-ocean__postcard about-ocean__postcard--coast">
-              <Image src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=86" alt={copy.coastAlt} fill sizes="(max-width: 720px) 42vw, 20vw" loading="lazy" />
+              <img src={hero.images[1].image} alt={hero.images[1].alt[locale]} loading="lazy" />
             </figure>
             <figure className="about-ocean__postcard about-ocean__postcard--crew">
-              <Image
-                src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?auto=format&fit=crop&w=900&q=85"
-                alt={copy.groupAlt}
-                fill
-                sizes="(max-width: 720px) 44vw, 22vw"
-                loading="lazy"
-              />
+              <img src={hero.images[2].image} alt={hero.images[2].alt[locale]} loading="lazy" />
             </figure>
             <span className="about-ocean__visual-note" aria-hidden="true"><AboutIcon name="wave" /></span>
           </div>
@@ -154,32 +54,30 @@ export default function AboutOceanSection({ locale }: { locale: Locale }) {
 
       <section id="ocean-impact" className="about-ocean__impact" aria-labelledby="about-ocean-impact-title">
         
-        <Image
+        <img
           className="about-ocean__impact-image"
-          src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=2200&q=88"
+          src={impact.image}
           alt=""
-          fill
-          sizes="100vw"
           loading="lazy"
         />
         <div className="about-ocean__impact-inner">
           <div className="about-ocean__impact-copy" data-reveal>
-            <p className="about-ocean__eyebrow"><span>{copy.impactEyebrow}</span><i aria-hidden="true" /></p>
-            <h2 id="about-ocean-impact-title">{copy.impactTitle.map((line) => <span key={line}>{line}</span>)}</h2>
-            <p>{copy.impactDescription}</p>
+            <p className="about-ocean__eyebrow"><span>{impact.eyebrow[locale]}</span><i aria-hidden="true" /></p>
+            <h2 id="about-ocean-impact-title">{impact.title.map((line) => <span key={line[locale]}>{line[locale]}</span>)}</h2>
+            <p>{impact.description[locale]}</p>
             <Link href="/activities" className="about-ocean__button about-ocean__button--light">
-              {copy.cta}<span aria-hidden="true">→</span>
+              {impact.cta[locale]}<span aria-hidden="true">→</span>
             </Link>
           </div>
 
           <ul className="about-ocean__highlights" data-stagger>
-            {copy.highlights.map(([title, detail], index) => {
+            {impact.highlights.map((highlight, index) => {
               const icons: AboutIconName[] = ["pin", "wave", "star"];
               return (
-                <li key={title} data-card>
+                <li key={highlight.title[locale]} data-card>
                   <span className="about-ocean__highlight-icon"><AboutIcon name={icons[index]} /></span>
-                  <strong>{title}</strong>
-                  <small>{detail}</small>
+                  <strong>{highlight.title[locale]}</strong>
+                  <small>{highlight.detail[locale]}</small>
                 </li>
               );
             })}

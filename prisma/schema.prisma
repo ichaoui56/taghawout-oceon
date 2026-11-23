@@ -202,6 +202,18 @@ model HeroPresentationSetting {
   updatedAt DateTime @updatedAt
 }
 
+model ExperienceGallerySetting {
+  id        String   @id @default("homepage")
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
+model HomepageSectionsSetting {
+  id        String   @id @default("homepage")
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
 model SurfPackageCatalogSetting {
   id        String   @id @default("catalog")
   data      Json

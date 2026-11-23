@@ -32,6 +32,10 @@ import DashboardAccountSettings from "./DashboardAccountSettings";
 import DashboardSeoManagement from "./DashboardSeoManagement";
 import ConciergeManagement from "./ConciergeManagement";
 import HeroPresentationManagement from "./HeroPresentationManagement";
+import ExperienceGalleryManagement from "./ExperienceGalleryManagement";
+import HomepageContentManagement from "./HomepageContentManagement";
+import type { ExperienceGalleryEntry } from "../experience-gallery";
+import type { HomepageSectionsSettings } from "../homepage-sections";
 import type { SiteSeoSettings } from "../seo";
 import type { ConciergeSectionSettings } from "../concierge";
 import type { HeroPresentationSettings } from "../hero-presentation";
@@ -69,6 +73,8 @@ type Props = {
   siteSeoSettings: SiteSeoSettings | null;
   conciergeSettings: ConciergeSectionSettings | null;
   heroPresentationSettings: HeroPresentationSettings | null;
+  experienceGallery: ExperienceGalleryEntry[];
+  homepageSectionsSettings: HomepageSectionsSettings | null;
   surfPackages: SurfPackage[];
   surfPackageDetail: SurfPackage | null;
   isNewSurfPackage: boolean;
@@ -404,6 +410,8 @@ export default function TransferDashboard({
   siteSeoSettings,
   conciergeSettings,
   heroPresentationSettings,
+  experienceGallery,
+  homepageSectionsSettings,
   surfPackages,
   surfPackageDetail,
   isNewSurfPackage,
@@ -548,6 +556,10 @@ export default function TransferDashboard({
             ? "Account settings"
           : page === "presentation"
             ? "Hero presentation"
+          : page === "experience-gallery"
+            ? "Experience gallery"
+          : page === "homepage-content"
+            ? "Homepage content"
           : page === "surf-packages"
             ? "Surf packages"
           : page === "surf-package-detail"
@@ -818,6 +830,12 @@ export default function TransferDashboard({
               <Link href="/dashboard/presentation" className={page === "presentation" ? "is-active" : ""} title="Hero presentation">
                 <span><DashboardIcon name="content" /></span><span>Hero presentation</span>
               </Link>
+              <Link href="/dashboard/experience-gallery" className={page === "experience-gallery" ? "is-active" : ""} title="Experience gallery">
+                <span><DashboardIcon name="content" /></span><span>Experience gallery</span>
+              </Link>
+              <Link href="/dashboard/homepage-content" className={page === "homepage-content" ? "is-active" : ""} title="Homepage content">
+                <span><DashboardIcon name="content" /></span><span>Homepage content</span>
+              </Link>
               <Link href="/dashboard/seo" className={page === "seo" ? "is-active" : ""} title="Website SEO settings">
                 <span aria-hidden="true">⌕</span><span>Website SEO</span>
               </Link>
@@ -902,7 +920,7 @@ export default function TransferDashboard({
             <div>
               <p className="transfer-eyebrow">Travel operations · Morocco</p>
               <h1>{heading}</h1>
-              <p>{page === "overview" ? "A clear view of your bookings, routes and guest experiences." : page === "requests" ? "Review guest details and keep every booking moving." : page === "request-detail" ? "Full guest, journey and booking details." : page === "activities" ? "Create and publish experiences with complete content and flexible pricing." : page === "activity-detail" ? "Complete content, schedule and booking setup for this experience." : page === "activity-reservations" ? "Review guest requests, confirm availability and manage every experience booking." : page === "activity-reservation-detail" ? "Guest details, scheduled activities and booking status." : page === "blogs" ? "Create stories, control publication, and manage search and social previews." : page === "reviews" ? "Add and publish customer reviews, profile photos, and your Google location." : page === "settings" ? "Update your dashboard username and password." : page === "presentation" ? "Edit the homepage hero copy, buttons, and featured experience cards." : page === "surf-packages" ? "Manage bilingual package details, pricing, booking times, and homepage features." : page === "surf-package-reservations" ? "Review guest details, dates, times, party sizes, totals, and reservation status." : page === "surf-lessons" ? "Create and publish lessons with bilingual details, pricing, booking times, and homepage features." : page === "surf-lesson-detail" ? "Edit lesson details, pricing, schedule, and visibility." : page === "surf-lesson-reservations" ? "Review lesson bookings, guest details, dates, times, totals, and reservation status." : page === "customers" ? "One record per guest with booking history across surf packages, surf lessons, and activities." : page === "seo" ? "Manage global metadata, crawling, verification, social previews, and structured identity." : "Manage all transfer options from one place."}</p>
+              <p>{page === "experience-gallery" ? "Manage the ordered photos and bilingual captions displayed in the homepage gallery." : page === "overview" ? "A clear view of your bookings, routes and guest experiences." : page === "requests" ? "Review guest details and keep every booking moving." : page === "request-detail" ? "Full guest, journey and booking details." : page === "activities" ? "Create and publish experiences with complete content and flexible pricing." : page === "activity-detail" ? "Complete content, schedule and booking setup for this experience." : page === "activity-reservations" ? "Review guest requests, confirm availability and manage every experience booking." : page === "activity-reservation-detail" ? "Guest details, scheduled activities and booking status." : page === "blogs" ? "Create stories, control publication, and manage search and social previews." : page === "reviews" ? "Add and publish customer reviews, profile photos, and your Google location." : page === "settings" ? "Update your dashboard username and password." : page === "presentation" ? "Edit the homepage hero copy, buttons, and featured experience cards." : page === "surf-packages" ? "Manage bilingual package details, pricing, booking times, and homepage features." : page === "surf-package-reservations" ? "Review guest details, dates, times, party sizes, totals, and reservation status." : page === "surf-lessons" ? "Create and publish lessons with bilingual details, pricing, booking times, and homepage features." : page === "surf-lesson-detail" ? "Edit lesson details, pricing, schedule, and visibility." : page === "surf-lesson-reservations" ? "Review lesson bookings, guest details, dates, times, totals, and reservation status." : page === "customers" ? "One record per guest with booking history across surf packages, surf lessons, and activities." : page === "seo" ? "Manage global metadata, crawling, verification, social previews, and structured identity." : "Manage all transfer options from one place."}</p>
             </div>
             {isAdmin && page === "transfers" && (
               <button type="button" className="transfer-add-button" onClick={startAdd}>
@@ -1032,6 +1050,10 @@ export default function TransferDashboard({
           {page === "seo" && isAdmin && siteSeoSettings && <DashboardSeoManagement initialSettings={siteSeoSettings} />}
 
           {page === "presentation" && isAdmin && heroPresentationSettings && <HeroPresentationManagement initialSettings={heroPresentationSettings} />}
+
+          {page === "experience-gallery" && isAdmin && <ExperienceGalleryManagement initialEntries={experienceGallery} />}
+
+          {page === "homepage-content" && isAdmin && homepageSectionsSettings && <HomepageContentManagement initialSettings={homepageSectionsSettings} />}
 
           {page === "surf-packages" && isAdmin && <SurfPackageCatalogManagement initialPackages={surfPackages} />}
 

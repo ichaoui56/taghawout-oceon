@@ -14,7 +14,11 @@ import type { SurfLesson } from "../surf-lessons";
 import { getManagedCustomers } from "../server/customer-directory";
 import type { ManagedCustomer } from "../server/customer-directory";
 import { getManagedGoogleReviewCount, getManagedGoogleReviews } from "../server/google-reviews";
+import { getManagedExperienceGallery } from "../server/experience-gallery";
+import { getManagedHomepageSectionsSettings } from "../server/homepage-sections";
 import TransferDashboard from "./TransferDashboard";
+import type { ExperienceGalleryEntry } from "../experience-gallery";
+import type { HomepageSectionsSettings } from "../homepage-sections";
 
 export type DashboardPage =
   | "overview"
@@ -31,6 +35,8 @@ export type DashboardPage =
   | "seo"
   | "concierge"
   | "presentation"
+  | "experience-gallery"
+  | "homepage-content"
   | "surf-packages"
   | "surf-package-detail"
   | "surf-package-reservations"
@@ -50,7 +56,7 @@ export default async function TransferDashboardWrapper({
   const result = await getTransferDashboardData();
   if (!result.authorized) redirect("/dashboard/loginP");
   if (
-    (page === "transfers" || page === "activities" || page === "activity-detail" || page === "activity-reservations" || page === "activity-reservation-detail" || page === "blogs" || page === "reviews" || page === "seo" || page === "concierge" || page === "presentation" || page === "surf-packages" || page === "surf-package-detail" || page === "surf-package-reservations" || page === "surf-lessons" || page === "surf-lesson-detail" || page === "surf-lesson-reservations" || page === "customers") &&
+    (page === "transfers" || page === "activities" || page === "activity-detail" || page === "activity-reservations" || page === "activity-reservation-detail" || page === "blogs" || page === "reviews" || page === "seo" || page === "concierge" || page === "presentation" || page === "experience-gallery" || page === "homepage-content" || page === "surf-packages" || page === "surf-package-detail" || page === "surf-package-reservations" || page === "surf-lessons" || page === "surf-lesson-detail" || page === "surf-lesson-reservations" || page === "customers") &&
     result.user.role !== "ADMIN"
   ) {
     redirect("/dashboard/requests");
@@ -97,6 +103,12 @@ export default async function TransferDashboardWrapper({
   const siteSeoSettings = page === "seo" ? await getSiteSeoSettings() : null;
   const conciergeSettings = page === "concierge" ? await getConciergeSettings() : null;
   const heroPresentationSettings = page === "presentation" ? await getHeroPresentationSettings() : null;
+  const experienceGallery: ExperienceGalleryEntry[] = page === "experience-gallery"
+    ? await getManagedExperienceGallery()
+    : [];
+  const homepageSectionsSettings: HomepageSectionsSettings | null = page === "homepage-content"
+    ? await getManagedHomepageSectionsSettings()
+    : null;
   const surfPackages = page === "surf-packages" || page === "surf-package-detail" ? await getSurfPackages() : [];
   const isNewSurfPackage = page === "surf-package-detail" && detailId === "new";
   const surfPackageDetail: SurfPackage | null = page !== "surf-package-detail"
@@ -174,6 +186,8 @@ export default async function TransferDashboardWrapper({
       siteSeoSettings={siteSeoSettings}
       conciergeSettings={conciergeSettings}
       heroPresentationSettings={heroPresentationSettings}
+      experienceGallery={experienceGallery}
+      homepageSectionsSettings={homepageSectionsSettings}
       surfPackages={surfPackages}
       surfPackageDetail={surfPackageDetail}
       isNewSurfPackage={isNewSurfPackage}

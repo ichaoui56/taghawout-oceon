@@ -1,40 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { translate, type Locale } from "../i18n";
+import type { Locale } from "../i18n";
+import type { TeamSectionSettings } from "../homepage-sections";
 
-const teamMembers = [
-  {
-    number: "01",
-    name: "Ali",
-    role: "Chief Executive Officer",
-    detail: "Leading the team and shaping thoughtful journeys in Taghazout.",
-    image: "/team/ali.png",
-    imageAlt: "Ali, Chief Executive Officer",
-  },
-  {
-    number: "02",
-    name: "Skorola",
-    role: "Head of Marketing",
-    detail: "Sharing the people, places, and experiences that make Taghazout special.",
-    image: "/team/skorola.png",
-    imageAlt: "Skorola, Head of Marketing",
-  },
-  {
-    number: "03",
-    name: "Srikisa",
-    role: "Surf Guide",
-    detail: "Guiding guests through the local surf experience and out to the waves.",
-    image: "/team/skirisa.png",
-    imageAlt: "Srikisa, Surf Guide",
-  },
-];
-
-export default function TeamMembersSection({ locale }: { locale: Locale }) {
+export default function TeamMembersSection({ locale, settings }: { locale: Locale; settings: TeamSectionSettings }) {
   const section = useRef<HTMLElement>(null);
-  const t = (phrase: string) => translate(locale, phrase);
 
   useEffect(() => {
     const element = section.current;
@@ -83,47 +55,45 @@ export default function TeamMembersSection({ locale }: { locale: Locale }) {
       <div className="team-section__inner mx-auto max-w-[1500px]">
         <div className="team-section__kicker" data-reveal>
           <span>TAGHAZOUT · MOROCCO</span>
-          <span><i aria-hidden="true" /> {locale === "fr" ? "ÉQUIPE LOCALE" : "LOCAL CREW"}</span>
+          <span><i aria-hidden="true" /> {settings.localCrew[locale]}</span>
         </div>
         <div className="team-section__intro" data-reveal>
           <div className="team-section__title-wrap">
-            <p className="eyebrow">{t("The people behind it")}</p>
-            <h2><span>{t("Meet the")}</span><span>{t("team.")}</span></h2>
+            <p className="eyebrow">{settings.eyebrow[locale]}</p>
+            <h2><span>{settings.titleLead[locale]}</span><span>{settings.titleAccent[locale]}</span></h2>
           </div>
           <p className="team-section__summary">
-            {t("Three people, one local perspective. Get to know the team behind your Taghazout experience.")}
+            {settings.summary[locale]}
           </p>
         </div>
 
         <ol className="team-section__grid" data-stagger>
-          {teamMembers.map((member) => (
-            <li className="team-member" key={member.number} data-card>
+          {settings.members.map((member, index) => (
+            <li className="team-member" key={member.id} data-card>
               <article className="team-member__card">
                 <div className="team-member__portrait">
-                <Image
-                  src={member.image}
-                  alt={t(member.imageAlt)}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 33vw"
-                  className="team-member__image"
-                />
+                  <img src={member.image} alt={member.imageAlt[locale]} className="team-member__image" loading="lazy" />
                   <span className="team-member__shade" aria-hidden="true" />
                   <div className="team-member__portrait-meta">
-                    <span className="team-member__number">{member.number}</span>
+                    <span className="team-member__number">{String(index + 1).padStart(2, "0")}</span>
                     <span className="team-member__location">TAGHAZOUT</span>
                   </div>
                   <div className="team-member__content">
-                    <p>{t(member.role)}</p>
+                    <p>{member.role[locale]}</p>
                     <h3>{member.name}</h3>
                   </div>
                 </div>
               </article>
+              <footer className="team-member__footer">
+                <span>{member.detail[locale]}</span>
+                <span className="team-member__marker" aria-hidden="true">↗</span>
+              </footer>
             </li>
           ))}
         </ol>
         <div className="team-section__outro" data-reveal>
-          <span>TEAM · TAGHAZOUT</span>
-          <p>{t("Good journeys start with good people.")}</p>
+          <span>{settings.outroLabel[locale]}</span>
+          <p>{settings.outro[locale]}</p>
           <span aria-hidden="true">↗</span>
         </div>
       </div>

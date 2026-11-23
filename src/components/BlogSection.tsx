@@ -2,8 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { getBlogImageUrl, type BlogPost } from "../blogs";
 import { localizeTree, translate, type Locale } from "../i18n";
+import type { OceanLogSettings } from "../homepage-sections";
 
-export default function BlogSection({ locale, posts }: { locale: Locale; posts: BlogPost[] }) {
+export default function BlogSection({ locale, posts, settings }: { locale: Locale; posts: BlogPost[]; settings: OceanLogSettings }) {
   const t = (phrase: string) => translate(locale, phrase);
   const sortedPosts = [...localizeTree(posts, locale)]
     .sort((first, second) => second.publishedAt.localeCompare(first.publishedAt));
@@ -31,20 +32,20 @@ export default function BlogSection({ locale, posts }: { locale: Locale; posts: 
               </svg>
               <span>✈</span>
             </div>
-            <span className="travel-blog__eyebrow">{t("OUR BLOG")}</span>
+            <span className="travel-blog__eyebrow">{settings.eyebrow[locale]}</span>
             <h2 id="travel-blog-title" className="travel-blog__title">
-              <span>{t("Stories for")} </span>
-              <span>{t("the")} <em>{t("Road")}</em></span>
+              <span>{settings.titleLead[locale]} </span>
+              <span>{settings.titleBridge[locale]} <em>{settings.titleAccent[locale]}</em></span>
             </h2>
             <p className="travel-blog__description">
-              {t("Travel tips, destination guides, and insider advice to make your journey even better.")}
+              {settings.description[locale]}
             </p>
             <div className="travel-blog__actions">
               <Link href="/blog" className="travel-blog__button">
-                <span>{t("Explore All Articles")}</span>
+                <span>{settings.button[locale]}</span>
                 <span className="travel-blog__button-arrow" aria-hidden="true">→</span>
               </Link>
-              <span className="travel-blog__signature">{t("Let's explore together")}</span>
+              <span className="travel-blog__signature">{settings.signature[locale]}</span>
             </div>
           </div>
 

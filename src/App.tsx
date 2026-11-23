@@ -21,8 +21,10 @@ import AboutOceanSection from "./components/AboutOceanSection";
 import type { HeroPresentationSettings } from "./hero-presentation";
 import type { SurfPackage } from "./surf-packages";
 import type { SurfLesson } from "./surf-lessons";
+import type { ExperienceGalleryEntry } from "./experience-gallery";
+import type { HomepageSectionsSettings } from "./homepage-sections";
 
-export default function App({ activities, posts, locale, reviews, heroPresentation, surfPackages, surfLessons }: { activities: Activity[]; posts: BlogPost[]; locale: Locale; reviews: GoogleReviewsData | null; heroPresentation: HeroPresentationSettings; surfPackages: SurfPackage[]; surfLessons: SurfLesson[] }) {
+export default function App({ activities, posts, locale, reviews, heroPresentation, experienceGallery, homepageSections, surfPackages, surfLessons }: { activities: Activity[]; posts: BlogPost[]; locale: Locale; reviews: GoogleReviewsData | null; heroPresentation: HeroPresentationSettings; experienceGallery: ExperienceGalleryEntry[] | null; homepageSections: HomepageSectionsSettings; surfPackages: SurfPackage[]; surfLessons: SurfLesson[] }) {
   return (
     <>
       <PageLoader />
@@ -48,12 +50,12 @@ export default function App({ activities, posts, locale, reviews, heroPresentati
           <div className="surf-section-transition" aria-hidden="true" />
           <ActivitiesAdventuresSection activities={activities} locale={locale} />
           <div className="surf-section-transition" aria-hidden="true" />
-          <ExperienceGallery activities={activities} locale={locale} /> 
-          <AboutOceanSection locale={locale} />
-          <TeamMembersSection locale={locale} />
+          <ExperienceGallery activities={activities} entries={experienceGallery} locale={locale} />
+          <AboutOceanSection locale={locale} settings={homepageSections.about} />
+          <TeamMembersSection locale={locale} settings={homepageSections.team} />
           <div className="surf-section-transition" aria-hidden="true" />
           <div className="surf-section-transition" aria-hidden="true" />
-          <BlogSection locale={locale} posts={posts} />
+          <BlogSection locale={locale} posts={posts} settings={homepageSections.oceanLog} />
           <div className="surf-section-transition" aria-hidden="true" />
           <div className="surf-section-transition" aria-hidden="true" />
           <GoogleReviews data={reviews} locale={locale} />

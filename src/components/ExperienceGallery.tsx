@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Activity } from "../activities";
 import type { Locale } from "../i18n";
+import type { ExperienceGalleryEntry } from "../experience-gallery";
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -22,7 +23,7 @@ const fallbackImages = [
   ["https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1000&q=86", "Atlantic landscape"],
 ] as const;
 
-export default function ExperienceGallery({ activities, locale }: { activities: Activity[]; locale: Locale }) {
+export default function ExperienceGallery({ activities, entries, locale }: { activities: Activity[]; entries: ExperienceGalleryEntry[] | null; locale: Locale }) {
   const root = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
 
@@ -34,7 +35,11 @@ export default function ExperienceGallery({ activities, locale }: { activities: 
     }
     if (managed.length >= 10) break;
   }
-  const images = managed.length ? managed : fallbackImages.map(([src, alt]) => ({ src, alt }));
+  const images = entries !== null
+    ? entries.map((entry) => ({ src: entry.image, alt: entry.title[locale] }))
+    : managed.length
+      ? managed
+      : fallbackImages.map(([src, alt]) => ({ src, alt }));
 
   useEffect(() => {
     const section = root.current;
@@ -63,7 +68,7 @@ export default function ExperienceGallery({ activities, locale }: { activities: 
     }, section);
 
     return () => context.revert();
-  }, [activities]);
+  }, [activities, entries]);
 
   const heading = locale === "fr" ? "NOTRE MONDE. NOS EXPÉRIENCES." : "OUR WORLD. OUR EXPERIENCES.";
   const subtitle = locale === "fr"
